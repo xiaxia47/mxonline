@@ -1,4 +1,4 @@
-#_*_ coding:utf-8 _*-
+# _*_ coding:utf-8 _*-
 from datetime import datetime
 from django.db import models
 
@@ -31,7 +31,7 @@ class Lesson(models.Model):
 
 
 class Video(models.Model):
-    lesson = models.ForeignKey(Lesson,verbose_name="章节", on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, verbose_name="章节", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name="视频名")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 

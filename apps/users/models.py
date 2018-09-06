@@ -1,10 +1,10 @@
 from datetime import datetime
 
-#第三方
+# 第三方
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-#自定义lib
+# 自定义lib
 # Create your models here.
 
 
@@ -20,7 +20,7 @@ class UserProfile(AbstractUser):
         verbose_name_plural = verbose_name = "用户信息"
 
     def __str__(self):
-        return self.self
+        return self.username
 
 
 class EmailVerifyRecord(models.Model):

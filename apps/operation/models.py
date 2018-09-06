@@ -20,7 +20,6 @@ class UserAsk(models.Model):
 
 
 class CourseComment(models.Model):
-    "课程评论"
     user = models.ForeignKey(UserProfile, verbose_name="用户名", on_delete=models.CASCADE)
     course = models.ForeignKey(Course, verbose_name="课程", on_delete=models.CASCADE)
     comments = models.CharField(max_length=200, verbose_name="评论")
