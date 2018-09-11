@@ -9,12 +9,23 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
+import os
+import sys
 
-import os, sys
+
+def add_syspath(apps_path_list):
+    for app_path in apps_path_list:
+        sys.path.insert(0, app_path)
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
+APPS_DIR = os.path.join(BASE_DIR, 'apps')
+EXTRA_APPS_DIR = os.path.join(BASE_DIR, 'extra_apps')
+
+add_syspath([APPS_DIR,
+             EXTRA_APPS_DIR
+        ])
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/

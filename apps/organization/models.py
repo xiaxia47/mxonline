@@ -12,6 +12,9 @@ class CityDict(models.Model):
     class Meta:
         verbose_name_plural = verbose_name = "城市"
 
+    def __str__(self):
+        return self.name
+
 
 class CourseOrg(models.Model):
     name = models.CharField(max_length=50, verbose_name="机构名称")
@@ -25,6 +28,9 @@ class CourseOrg(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "课程机构"
+
+    def __str__(self):
+        return self.name
 
 
 class Teacher(models.Model):
@@ -40,3 +46,6 @@ class Teacher(models.Model):
 
     class Meta:
         verbose_name_plural = verbose_name = "教师"
+
+    def __str__(self):
+        return f"{self.org}-{self.name}"
