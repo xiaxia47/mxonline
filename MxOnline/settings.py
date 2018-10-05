@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    'django.contrib.sessions', # seesion 自动处理的相关程序
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'courses',
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'operation',
     'xadmin',
     'crispy_forms',
+    'captcha',
 ]
 
 AUTH_USER_MODEL = "users.UserProfile"
@@ -146,3 +147,10 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+
+EMAIL_HOST = 'smtp.sina.com'
+EMAIL_PORT = 25
+EMAIL_FROM = EMAIL_HOST_USER = 'fsdeep@sina.com'
+EMAIL_HOST_PASSWORD = 'WoShiShuaiGe-1'
+ENAIL_USE_TLS = True

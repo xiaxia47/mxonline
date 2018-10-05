@@ -42,7 +42,7 @@
             <ul class="fr hd-bar">
                 <li>服务电话：<span>33333333</span></li>
                 <li class="active"><a href="{% url 'login' %}">[登录]</a></li>
-                <li><a href="register.html">[注册]</a></li>
+                <li><a href="{% url 'register' %}">[注册]</a></li>
             </ul>
         </div>
     </div>
@@ -80,12 +80,12 @@
                     <div class="error btns login-form-tips" id="jsLoginTips">{% for key,error  in login_form.errors.items %}{{ error }}{% endfor %}{{ msg }}</div>
                      <div class="auto-box marb38">
 
-                        <a class="fr" href="forgetpwd.html">忘记密码？</a>
+                        <a class="fr" href="{% url 'forget' %}">忘记密码？</a>
                      </div>
                     <input class="btn btn-green" id="jsLoginBtn" type="submit" value="立即登录 > " />
                     {% csrf_token %}
                 </form>
-                <p class="form-p">没有慕学在线网帐号？<a href="register.html">[立即注册]</a></p>
+                <p class="form-p">没有慕学在线网帐号？<a href="{% url 'register' %}">[立即注册]</a></p>
             </div>
         </div>
     </div>
