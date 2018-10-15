@@ -14,22 +14,18 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import xadmin
-from django.urls import path
+from django.urls import path,re_path
 from django.views.generic import TemplateView
 from django.conf.urls import include
+from django.views.static import serve
 
-from users.views import LoginView, RegisterView, ActivateUser, ForgetPwdView, ResetView, PwdResetView
-from organization.views import OrgView
+from .settings import MEDIA_ROOT
 
 urlpatterns = [
-    path('xadmin/', xadmin.site.urls),
     path('', TemplateView.as_view(template_name='index.html'), name="index"),
-    path('login/', LoginView.as_view(), name="login"),
-    path('register/', RegisterView.as_view(), name="register"),
+    path('xadmin/', xadmin.site.urls),
     path('captcha/', include('captcha.urls')),
-    path('activate/<slug:active_code>', ActivateUser.as_view(), name='activate'),
-    path('forget/', ForgetPwdView.as_view(), name='forget'),
-    path('reset/<slug:reset_code>', ResetView.as_view(), name='reset'),
-    path('pwd_reset/', PwdResetView.as_view(), name='pwd_reset'),
-    path('org_list/', OrgView.as_view(), name='org_list'),
+    path('users/', include('users.urls', namespace='users')),
+    path('orgs/', include('organization.urls', namespace='orgs')),
+    re_path('media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 ]

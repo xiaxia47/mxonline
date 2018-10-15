@@ -20,7 +20,6 @@
     <header>
 		<div  class=" header">
  			<div class="top">
-
 				<div class="wp">
 					<div class="fl"><p>服务电话：<b>33333333</b></p></div>
 					<!--登录后跳转-->
@@ -45,8 +44,8 @@
                             </div>
                         </div>
                     {% else %}
-                        <a style="color:white" class="fr registerbtn" href="{% url 'register' %}">注册</a>
-                        <a style="color:white" class="fr loginbtn" href="{% url 'login' %}">登录</a>
+                        <a style="color:white" class="fr registerbtn" href="{% url 'users:register' %}">注册</a>
+                        <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
 					{% endif %}
 
 
@@ -88,7 +87,7 @@
 							<li >
 								<a href="teachers-list.html">授课教师</a>
 							</li>
-							<li ><a href="org-list.html">授课机构</a></li>
+							<li ><a href="orgs/org-list.html">授课机构</a></li>
 						</ul>
 					</div>
 				</div>
@@ -322,7 +321,7 @@
 					<div class="module3_1 left">
 						<img width="228" height="463" src="{% static 'images/module3_1.jpg' %}"/>
 						<p class="fisrt_word">名校来袭<br/>权威认证</p>
-						<a class="more" href="org-list.html">查看更多机构 ></a>
+						<a class="more" href="orgs/org-list.html">查看更多机构 ></a>
 					</div>
 					<div class="right">
 						<ul>

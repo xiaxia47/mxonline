@@ -1,6 +1,6 @@
 # _*_ coding:utf-8 _*_
 
-from django.shortcuts import render
+from django.shortcuts import render, reverse, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
@@ -24,14 +24,15 @@ class CustomBackend(ModelBackend):
 
 class LoginView(View):
 
-    template_name = 'login.html'
+    template_name = 'users/login.html'
+    url = 'users:login'
 
     def get(self, request):
-        return render(request=request, template_name=self.template_name, context={})
+        context = {'login_form': LoginForm()}
+        return render(request=request, template_name=self.template_name, context=context)
 
     def post(self, request):
-        context = {}
-        next_template = self.template_name
+        context = {'request': request}
         login_form = LoginForm(request.POST)
         if login_form.is_valid():
             user_name = request.POST.get('username', '')
@@ -39,20 +40,26 @@ class LoginView(View):
             user = authenticate(username=user_name, password=pass_word)
             if user is not None and user.is_active:
                 login(request, user=user)
-                next_template = 'index.html'
+                self.url = 'index'
+                return redirect(reverse(self.url), kwargs=context)
             else:
                 context['msg'] = '用户名密码错误或用户未激活'
         else:
             context['login_form'] = login_form
-        return render(request=request, template_name=next_template, context=context)
+        return render(request=request, template_name=self.template_name)
 
 
 class RegisterView(View):
+    template_name = 'users/register.html'
+    url = 'users:register'
+
+    def get(self, request):
+        context = {'register_form': RegisterForm()}
+        return render(request=request, template_name=self.template_name, context=context)
 
     def post(self, request):
         register_form = RegisterForm(request.POST)
-        template_name = 'register.html'
-        context = {}
+        context = {'request': request}
         if register_form.is_valid():
             user_name = request.POST.get('email', "")
             pass_word = request.POST.get('password', "")
@@ -66,44 +73,49 @@ class RegisterView(View):
                 user_profile.save()
                 send_register_email(user_name, 'register')
                 context['msg'] = "注册成功，激活链接已发送到您的邮箱"
-                template_name = 'login.html'
+                self.template_name = 'users/login.html'
             else:
                 context['msg'] = "该邮箱已被使用"
         else:
             context['register_form'] = register_form
 
-        return render(request, template_name=template_name, context=context)
+        return render(request=request, template_name=self.template_name, context=context)
 
 
 class ForgetPwdView(View):
 
+    template_name = 'users/forgetpwd.html'
+    url = 'users:forget'
+
     def get(self, request):
-        forget_form = ForgetForm()
+        forget_form = request.GET.get('forget_form', ForgetForm())
         context = {'forget_form': forget_form}
-        return render(request, template_name='forgetpwd.html', context=context)
+        return render(request, template_name=self.template_name, context=context)
 
     def post(self, request):
-        context = {}
+        context = {'request': request}
         forget_form = ForgetForm(request.POST)
-        template_name = 'forgetpwd.html'
         if forget_form.is_valid():
             email = request.POST.get('email', '')
             if email_is_exist(UserProfile, email):
                 send_register_email(receiver=email, send_type='forget')
-                template_name = 'send_success.html'
+                self.url = 'users:mail_sent'
+                return redirect(reverse(self.url))
             else:
                 context['forget_form'] = forget_form
                 context['msg'] = '账号非法或者不存在'
         else:
             context['forget_form'] = forget_form
-        return render(request, template_name=template_name, context=context)
+        return render(request=request, template_name=self.template_name, context=context)
 
 
 class ActivateUser(View):
 
+    template_name = 'users/forgetpwd.html'
+    url = 'users:activate'
+
     def get(self, request, active_code):
-        template_name = "login.html"
-        context = {}
+        context = {'request': request}
         email_rec = EmailVerifyRecord.objects.get(code=active_code)
         if email_rec and email_rec.valid:
             email = email_rec.email
@@ -113,41 +125,49 @@ class ActivateUser(View):
             user.is_active = True
             user.save()
             context['msg'] = '激活成功，请重新登录'
+            self.template_name = "users/login.html"
+            return render(request=request, template_name=self.template_name, context=context)
         else:
-            template_name = 'url_expired.html'
-
-        return render(request, template_name=template_name, context=context)
+            self.url = 'users:expired'
+            return redirect(reverse(self.url))
 
 
 class ResetView(View):
+    template_name = 'users/password_reset.html'
+    url = 'users:reset'
 
     def get(self, request, reset_code):
-        template_name = 'url_expired.html'
-        context = {}
+        context = {'request': request}
         email_rec = EmailVerifyRecord.objects.get(code=reset_code)
         if email_rec and email_rec.valid:
-            modify_form = ModifyPwdForm(initial={'reset_code':reset_code,'email':email_rec.email})
+            modify_form = ModifyPwdForm(initial={'reset_code': reset_code, 'email': email_rec.email})
             context['msg'] = '已经通过验证，请设置新密码,本页面刷新后失效'
             context['modify_form'] = modify_form
-            template_name = "password_reset.html"
-
-        return render(request, template_name=template_name, context=context)
+            return render(request=request, template_name=self.template_name, context=context)
+        else:
+            self.url = 'users:expired'
+        return redirect(reverse(self.url), kwargs=context)
 
 
 class PwdResetView(View):
 
+    template_name = 'users/password_reset.html'
+    url = 'users:pwd_reset'
+
     def get(self, request):
-        template_name = "password_reset.html"
-        modify_form = ModifyPwdForm()
-        context = {'modify_form': modify_form}
-        return render(request, template_name=template_name, context=context)
+        modify_form = request.GET.get('modify_form', ModifyPwdForm())
+        msg = request.GET.get('msg', '')
+        context = {'modify_form': modify_form,
+                   'msg': msg
+                   }
+        return render(request, template_name=self.template_name, context=context)
 
     def post(self, request):
-        template_name = "password_reset.html"
         modify_form = ModifyPwdForm(request.POST)
-        context = {'modify_form': modify_form}
+        context = {'modify_form': modify_form,
+                   'request': request}
         if modify_form.is_valid():
-            reset_code = modify_form.data.get('reset_code','')
+            reset_code = modify_form.data.get('reset_code', '')
             email_rec = EmailVerifyRecord.objects.get(code=reset_code)
             if email_rec.valid:
                 email_rec.valid = False
@@ -156,11 +176,13 @@ class PwdResetView(View):
                     user.set_password(raw_password=modify_form.data.get('new_password', ''))
                     user.save()
                     context['msg'] = '重置成功，请重新登录'
-                    template_name = "login.html"
+                    email_rec.save()
+                    self.template_name = 'users/login.html'
                 else:
                     context['msg'] = '用户已注销或不存在'
             else:
-                template_name = 'url_expired.html'
+                self.template_name = 'users/url_expired.html'
         else:
             context['msg'] = '输入有误，请重试'
-        return render(request, template_name=template_name, context=context)
+
+        return render(request=request, template_name=self.template_name, context=context)
