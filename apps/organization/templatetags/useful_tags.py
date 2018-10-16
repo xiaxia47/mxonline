@@ -2,13 +2,13 @@
 __author__ = 'Sheldon'
 __date__ = '2018/10/9 7:58'
 
-from django.template import Library
+from django import template
 
-registers = Library()
+register = template.Library()
 
 
-@registers.simple_tag()
-def relative_url(value, field_name, urlencode=None):
+@register.simple_tag
+def relative_url(field_name, value, urlencode=None):
     url = f"?{field_name}={value}"
     if urlencode:
         querystring = urlencode.split('&')

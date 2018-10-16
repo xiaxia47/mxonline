@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions', # seesion 自动处理的相关程序
+    'django.contrib.sessions',# seesion 自动处理的相关程序
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'courses',
@@ -89,7 +89,11 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
             ],
+            'libraries':{
+                'useful_tags': 'organization.templatetags.useful_tags',
+            },
         },
+
     },
 ]
 
