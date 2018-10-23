@@ -5,6 +5,7 @@ from django.views.generic import View
 from pure_pagination import Paginator, PageNotAnInteger
 
 from .models import CourseOrg, CityDict
+from operation.forms import UserAskForm
 # Create your views here.
 
 
@@ -12,7 +13,7 @@ class OrgView(View):
     template_name = 'orgs/org-list.html'
 
     def get(self, request):
-
+        ua = UserAskForm()
         all_cities = CityDict.objects.all()
         all_orgs = CourseOrg.objects.all()
         city_id = request.GET.get('city', '')
@@ -30,8 +31,6 @@ class OrgView(View):
                 all_orgs = all_orgs.order_by('-students')
             elif sort == 'courses':
                 all_orgs = all_orgs.order_by('-course_nums')
-
-
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -48,5 +47,6 @@ class OrgView(View):
             'ct': category,
             'hot_orgs': hot_orgs,
             'sorted': sort,
+            'ua_form': ua,
         }
         return render(request, context=context, template_name=self.template_name)

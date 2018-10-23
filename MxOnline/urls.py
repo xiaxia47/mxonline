@@ -27,5 +27,6 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),
     path('users/', include('users.urls', namespace='users')),
     path('orgs/', include('organization.urls', namespace='orgs')),
+    path('oper/', include('operation.urls', namespace='oper')),
     re_path('media/(?P<path>.*)$', serve, {'document_root': MEDIA_ROOT}),
 ]

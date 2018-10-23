@@ -24,8 +24,8 @@
 					<!--登录后跳转-->
 
 
-                        <a style="color:white" class="fr registerbtn" href="users/register.html">注册</a>
-                        <a style="color:white" class="fr loginbtn" href="users/login.html">登录</a>
+                        <a style="color:white" class="fr registerbtn" href="{% url 'users:register' %}">注册</a>
+                        <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
 
 
 
@@ -57,7 +57,7 @@
 				<div class="nav">
 					<div class="wp">
 						<ul>
-							<li ><a href="index.html">首页</a></li>
+							<li ><a href="{% url 'index' %}">首页</a></li>
 							<li >
 								<a href="course-list.html">
 									公开课<img class="hot" src="{% static 'images/nav_hot.png' %}">
@@ -66,7 +66,7 @@
 							<li >
 								<a href="teachers-list.html">授课教师</a>
 							</li>
-							<li class="active" ><a href="orgs/org-list.html">授课机构</a></li>
+							<li class="active" ><a href="{% url 'orgs:org_list' %}">授课机构</a></li>
 						</ul>
 					</div>
 				</div>
@@ -125,12 +125,13 @@
                 $.ajax({
                     cache: false,
                     type: "POST",
-                    url: "/org/add_ask/",
+                    url: "{% url 'oper:user_ask' %}",
                     data: $('#jsStayForm').serialize(),
                     async: true,
                     success: function (data) {
                         if (data.status == 'success') {
                             $('#jsStayForm')[0].reset();
+                            $('#jsCompanyTips').html(data.msg);
                             alert("提交成功")
                         } else if (data.status == 'fail') {
                             $('#jsCompanyTips').html(data.msg)
