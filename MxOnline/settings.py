@@ -27,6 +27,9 @@ add_syspath([APPS_DIR,
              EXTRA_APPS_DIR
         ])
 
+# 切换环境-  TEST 测试环境  PROD 生产环境
+TEST_ENV = True
+PROD_ENV = False
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
@@ -102,16 +105,26 @@ WSGI_APPLICATION = 'MxOnline.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': "mxonline",
-        "USER": "pythonuser",
-        "PASSWORD": "WoShiShuaiGe-1",
-        "HOST": "209.250.229.232",
+if PROD_ENV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': "mxonline",
+            "USER": "pythonuser",
+            "PASSWORD": "WoShiShuaiGe-1",
+            "HOST": "209.250.229.232",
+        }
     }
-}
+elif TEST_ENV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': "mxonline",
+            "USER": "pythonuser",
+            "PASSWORD": "test",
+            "HOST": "localhost",
+        }
+    }
 
 
 # Password validation

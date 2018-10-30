@@ -22,3 +22,21 @@ class AddUserAskView(View):
             context['status'] = 'fail'
             context['msg'] = list(ua_form.errors.values())[0]
         return HttpResponse(content=json.dumps(context), content_type='application/json')
+
+
+class AddUserFavView(View):
+    '''
+    用户收藏
+    '''
+    def post(self, request):
+        ua_form = UserAskForm(request.POST)
+        context = {}
+        if ua_form.is_valid():
+            ua_form.save(commit=True)
+            context['status'] = 'success'
+            context['msg'] = '成功添加，请等待通知'
+        else:
+            context['status'] = 'fail'
+            context['msg'] = list(ua_form.errors.values())[0]
+        return HttpResponse(content=json.dumps(context), content_type='application/json')
+

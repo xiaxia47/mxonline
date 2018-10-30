@@ -38,7 +38,7 @@
                                 <a href="{% relative_url 'city' cur_city.id params %}"><span class="{% ifequal city cur_city.id|slugify %}active2{% endifequal %}">{{ cur_city.name }}</span></a>
                         {% endfor %}
 					</div>
-				</li>
+				</li>courses
 			</ul>
 		</div>
 		<div class="all">共<span class="key">{{ org_nums }}</span>家</div>
@@ -54,13 +54,13 @@
                 {% for course_org in orgs_list.object_list %}
                 <dl class="des difdes">
                     <dt>
-                        <a href="org-detail-homepage.html">
+                        <a href="{% url 'orgs:home' course_org.id %}">
                             <img width="200" height="120" class="scrollLoading" data-url="{{ MEDIA_URL }}{{ course_org.image }}"/>
                         </a>
                     </dt>
                     <dd>
                         <div class="clearfix">
-                             <a href="org-detail-homepage.html">
+                             <a href="{% url 'orgs:home' course_org.id %}">
                                  <h1>{{ course_org.name }}</h1>
                                  <div class="pic fl">
 

@@ -25,7 +25,7 @@ class CourseOrg(models.Model):
                                 default='pxjg')
     click_nums = models.IntegerField(default=0, verbose_name="点击量")
     fav_nums = models.IntegerField(default=0, verbose_name="收藏")
-    image = models.ImageField(upload_to="org/%Y/%m", verbose_name="封面图")
+    image = models.ImageField(upload_to="org/%Y/%m", verbose_name="封面图", null=True, blank=True)
     address = models.CharField(max_length=150, verbose_name="机构地址")
     city = models.ForeignKey(CityDict, verbose_name="所在城市", on_delete=models.CASCADE)
     students = models.IntegerField(default=0, verbose_name='学习人数')
@@ -46,7 +46,10 @@ class Teacher(models.Model):
     work_company = models.CharField(max_length=50, verbose_name="公司名称")
     work_position = models.CharField(max_length=50, verbose_name="公司职位")
     points = models.CharField(max_length=50, verbose_name="教学特点")
+    is_verified = models.BooleanField(verbose_name='是否认证', default=True)
     click_nums = models.IntegerField(default=0, verbose_name="点击量")
+    image = models.ImageField(verbose_name="头像", upload_to="teachers/%Y/%m", max_length=100,
+                              null=True, blank=True, default='')
     fav_nums = models.IntegerField(default=0, verbose_name="收藏")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
