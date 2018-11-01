@@ -32,7 +32,7 @@ class CourseComment(models.Model):
 class UserFavorite(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name="用户", on_delete=models.CASCADE)
     fav_id = models.IntegerField(default=0, verbose_name="数据ID")
-    fav_type = models.CharField(choices=((1, "课程"), (2, "课程机构"), (3, "课程讲师")),
+    fav_type = models.IntegerField(choices=((1, "课程"), (2, "课程机构"), (3, "课程讲师")),
                                 default=1, verbose_name="收藏类型", max_length=1)
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 

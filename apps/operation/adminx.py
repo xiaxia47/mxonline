@@ -52,6 +52,7 @@ class UserCourseAdmin(object):
     def course__name(self, object):
         return object.course.name
 
+
 xadmin.site.register(UserAsk, UserAskAdmin)
 xadmin.site.register(UserMessage, UserMessageAdmin)
 xadmin.site.register(CourseComment, CourseCommentAdmin)

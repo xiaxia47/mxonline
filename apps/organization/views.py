@@ -114,10 +114,6 @@ class OrgTeacherView(View):
     url_path = ''
 
     def get(self, request, org_id):
-        fav_id = request.POST.get('fav_id', '')
-        fav_type = request.POST.get('fav_type','')
-        #if not request.user.is_authenticated():
-        #    pass
         context = {}
         course_org = CourseOrg.objects.get(id=org_id)
         teachers = course_org.teacher_set.all()
