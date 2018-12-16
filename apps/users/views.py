@@ -4,11 +4,12 @@ from django.shortcuts import render, reverse, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
-from django.views.generic import View
+from django.views.generic import View,TemplateView
 
 from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm
 from utils.email_utils import send_register_email, email_is_exist
+from organization.models import CourseOrg
 # Create your views here.
 
 
@@ -185,4 +186,15 @@ class PwdResetView(View):
         else:
             context['msg'] = '输入有误，请重试'
 
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class IndexView(View):
+
+    template_name = 'index.html'
+
+    def get(self, request):
+        context = {}
+        context['org_list'] = CourseOrg.objects.all()[:30]
+        context['cur_page'] = 'index'
         return render(request=request, template_name=self.template_name, context=context)

@@ -29,7 +29,6 @@ class CourseOrg(models.Model):
     address = models.CharField(max_length=150, verbose_name="机构地址")
     city = models.ForeignKey(CityDict, verbose_name="所在城市", on_delete=models.CASCADE)
     students = models.IntegerField(default=0, verbose_name='学习人数')
-    course_nums = models.IntegerField(default=0, verbose_name='课程数')
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
     class Meta:
@@ -37,6 +36,14 @@ class CourseOrg(models.Model):
 
     def __str__(self):
         return self.name
+
+    #获取教师数量
+    def get_teacher_total(self):
+        return self.teacher_set.all().count()
+
+    #获取课程数量
+    def get_course_total(self):
+        return self.course_set.all().count()
 
 
 class Teacher(models.Model):

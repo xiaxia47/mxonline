@@ -23,19 +23,19 @@
 				<li>
 					<h2>机构类别</h2>
 					<div class="cont">
-                        <a href="{% relative_url 'ct' '' params %}"><span class="{% ifequal ct '' %}active2{% endifequal %}">全部</span></a>
-                            <a href="{% relative_url 'ct' 'pxjg' params %}"><span class="{% ifequal ct 'pxjg' %}active2{% endifequal %}">培训机构</span></a>
-                            <a href="{% relative_url 'ct' 'gx' params %}"><span class="{% ifequal ct 'gx' %}active2{% endifequal %}">高校</span></a>
-                            <a href="{% relative_url 'ct' 'gr' params %}"><span class="{% ifequal ct 'gr' %}active2{% endifequal %}">个人</span></a>
+                        <a href="{% relative_url 'ct' '' params %}"><span class="{% if ct == '' %}active2{% endif %}">全部</span></a>
+                            <a href="{% relative_url 'ct' 'pxjg' params %}"><span class="{% if ct == 'pxjg' %}active2{% endif %}">培训机构</span></a>
+                            <a href="{% relative_url 'ct' 'gx' params %}"><span class="{% if ct == 'gx' %}active2{% endif %}">高校</span></a>
+                            <a href="{% relative_url 'ct' 'gr' params %}"><span class="{% if ct == 'gr' %}active2{% endif %}">个人</span></a>
 					</div>
 				</li>
 				<li>
 					<h2>所在地区</h2>
 					<div class="more">更多</div>
 					<div class="cont">
-                        <a href="{% relative_url 'city' '' params %}"><span class={% ifequal city|slugify "" %}"active2" {% endifequal %}>全部</span></a>
+                        <a href="{% relative_url 'city' '' params %}"><span class={% if city|slugify == "" %}"active2" {% endif %}>全部</span></a>
                         {% for cur_city in all_cities %}
-                                <a href="{% relative_url 'city' cur_city.id params %}"><span class="{% ifequal city cur_city.id|slugify %}active2{% endifequal %}">{{ cur_city.name }}</span></a>
+                                <a href="{% relative_url 'city' cur_city.id params %}"><span class="{% if city == cur_city.id|slugify %}active2{% endif %}">{{ cur_city.name }}</span></a>
                         {% endfor %}
 					</div>
 				</li>courses
@@ -46,9 +46,9 @@
 		<div class="layout">
 			<div class="head">
 				<ul class="tab_header">
-					<li class="{% ifequal sorted '' %}active{% endifequal %}"><a href="{% relative_url 'sort' '' params %}">全部</a> </li>
-					<li class="{% ifequal sorted 'students' %}active{% endifequal %}"><a href="{% relative_url 'sort' 'students' params %}">学习人数 &#8595;</a></li>
-					<li class="{% ifequal sorted 'courses' %}active{% endifequal %}"><a href="{% relative_url 'sort' 'courses' params %}">课程数 &#8595;</a></li>
+					<li class="{% if sorted == '' %}active{% endif %}"><a href="{% relative_url 'sort' '' params %}">全部</a> </li>
+					<li class="{% if sorted == 'students' %}active{% endif %}"><a href="{% relative_url 'sort' 'students' params %}">学习人数 &#8595;</a></li>
+					<li class="{% if sorted == 'courses' %}active{% endif %}"><a href="{% relative_url 'sort' 'courses' params %}">课程数 &#8595;</a></li>
 				</ul>
 			</div>
                 {% for course_org in orgs_list.object_list %}
@@ -95,7 +95,7 @@
                {% endif %}
                {% for page in orgs_list.pages %}
                    {% if page %}
-                       <li class="{% ifequal page orgs_list.number %}active{% endifequal %}"><a href="{% relative_url 'page' page params %}">{{ page }}</a></li>
+                       <li class="{% if page == orgs_list.number %}active{% endif %}"><a href="{% relative_url 'page' page params %}">{{ page }}</a></li>
                    {% else %}
                        <li class="none"><a href="">...</a></li>
                    {% endif %}

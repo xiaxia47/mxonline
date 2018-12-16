@@ -6,7 +6,10 @@ from pure_pagination import Paginator, PageNotAnInteger
 
 from .models import CourseOrg, CityDict
 from operation.forms import UserAskForm
+from operation.models import UserFavorite
 # Create your views here.
+
+COURSE_FAV = 2
 
 
 class OrgView(View):
@@ -48,7 +51,9 @@ class OrgView(View):
             'hot_orgs': hot_orgs,
             'sorted': sort,
             'ua_form': ua,
+            'cur_page': 'org_list',
         }
+
         return render(request, context=context, template_name=self.template_name)
 
 
@@ -57,13 +62,20 @@ class OrgHomeView(View):
     url_path = ''
 
     def get(self, request, org_id):
-        context = {}
+        has_fav = False
+        if request.user.is_authenticated:
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            if existed_rec:
+                has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
-        context['org_id'] = org_id
-        context['courses'] = course_org.course_set.all()[:3]
-        context['teachers'] = course_org.teacher_set.all()[:1]
-        context['course_org'] = course_org
-        context['cur_page'] = 'home'
+        context = {
+            'has_fav': has_fav,
+            'org_id':org_id,
+            'courses':course_org.course_set.all()[:3],
+            'teachers':course_org.teacher_set.all()[:1],
+            'course_org':course_org,
+            'cur_page':'home',
+        }
         return render(request, template_name=self.template_name, context=context)
 
 
@@ -75,7 +87,11 @@ class OrgCourseView(View):
     url_path = ''
 
     def get(self, request, org_id):
-        context = {}
+        has_fav = False
+        if request.user.is_authenticated:
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            if existed_rec:
+                has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
         all_courses = course_org.course_set.all()
         try:
@@ -84,9 +100,13 @@ class OrgCourseView(View):
             page = 1
         page_content = Paginator(all_courses, per_page=9)
         courses_list = page_content.page(number=page)
-        context['org_id'] = org_id
-        context['courses'] = courses_list
-        context['cur_page'] = 'course'
+        context = {
+            'has_fav': has_fav,
+            'org_id': org_id,
+            'course_org': course_org,
+            'courses': courses_list,
+            'cur_page': 'course',
+        }
         return render(request, template_name=self.template_name, context=context)
 
 
@@ -98,11 +118,18 @@ class OrgDescView(View):
     url_path = ''
 
     def get(self, request, org_id):
-        context = {}
+        has_fav = False
+        if request.user.is_authenticated:
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            if existed_rec:
+                has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
-        context['org_id'] = org_id
-        context['course_org'] = course_org
-        context['cur_page'] = 'desc'
+        context = {
+            'has_fav': has_fav,
+            'org_id': org_id,
+            'course_org': course_org,
+            'cur_page': 'desc',
+        }
         return render(request, template_name=self.template_name, context=context)
 
 
@@ -114,10 +141,17 @@ class OrgTeacherView(View):
     url_path = ''
 
     def get(self, request, org_id):
-        context = {}
+        has_fav = False
+        if request.user.is_authenticated:
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            if existed_rec:
+                has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
         teachers = course_org.teacher_set.all()
-        context['org_id'] = org_id
-        context['course_org'] = course_org
-        context['teachers'] = teachers
+        context = {
+            'has_fav': has_fav,
+            'org_id': org_id,
+            'course_org': course_org,
+            'teachers': teachers,
+        }
         return render(request, template_name=self.template_name, context=context)

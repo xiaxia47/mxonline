@@ -22,7 +22,8 @@ def add_syspath(apps_path_list):
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 APPS_DIR = os.path.join(BASE_DIR, 'apps')
 EXTRA_APPS_DIR = os.path.join(BASE_DIR, 'extra_apps')
-
+COURSE_FAV = 1
+ORG_FAV = 2
 add_syspath([APPS_DIR,
              EXTRA_APPS_DIR
         ])
@@ -93,7 +94,7 @@ TEMPLATES = [
                 'django.template.context_processors.media',
             ],
             'libraries':{
-                'useful_tags': 'organization.templatetags.useful_tags',
+                'useful_tags': 'utils.templatetags.useful_tags',
             },
         },
 
