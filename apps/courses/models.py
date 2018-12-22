@@ -9,7 +9,7 @@ from organization.models import CourseOrg, Teacher
 
 class Course(models.Model):
     course_org = models.ForeignKey(CourseOrg, verbose_name='课程机构', null=True, on_delete=models.CASCADE)
-    teacher = models.ForeignKey(Teacher, verbose_name='授课教师', null=True, on_delete=models.CASCADE)
+    teacher = models.ForeignKey(Teacher, verbose_name='授课教师', null=True, blank=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, verbose_name="课程名")
     desc = models.CharField(max_length=300, verbose_name="课程描述")
     category = models.CharField(max_length=20, verbose_name="课程类别", default="后端开发")
@@ -21,18 +21,29 @@ class Course(models.Model):
     image = models.ImageField(verbose_name="封面图", upload_to="courses/%Y/%m", max_length=100, null=True, blank=True)
     click_nums = models.IntegerField(default=0, verbose_name="点击量")
     tag = models.CharField(default='', verbose_name="课程标签", max_length=10)
-    add_time = models.DateTimeField(default=datetime.now,verbose_name="课程添加时间")
+    add_time = models.DateTimeField(default=datetime.now, verbose_name="课程添加时间")
+    instruction = models.CharField(max_length=300, verbose_name="课程须知", default='', null=True, blank=True)
+    introduction = models.CharField(max_length=300, verbose_name="老师引言", default='', null=True, blank=True)
+    announcement = models.CharField(max_length=300, verbose_name="课程公告", default='', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = verbose_name = "课程"
 
-    #获取课程章节数
+#   获取课程章节数
     def get_zj_nums(self):
         return self.lesson_set.all().count()
 
-    #获取当前的学生
+#   获取当前的学生
     def get_learn_users(self):
         return self.usercourse_set.all()[:5]
+
+#   获取当前的学生
+    def get_students_cnt(self):
+        return self.usercourse_set.all().count()
+
+#    获取当前课程的章节明细
+    def get_course_lessons(self):
+        return self.lesson_set.all()
 
     def __str__(self):
         return self.name
@@ -46,6 +57,9 @@ class Lesson(models.Model):
     class Meta:
         verbose_name = verbose_name_plural = "章节"
 
+    def get_video_list(self):
+        return self.video_set.all()
+
     def __str__(self):
         return f"{self.course}-{self.name}"
 
@@ -53,6 +67,9 @@ class Lesson(models.Model):
 class Video(models.Model):
     lesson = models.ForeignKey(Lesson, verbose_name="章节", on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name="视频名")
+    duration = models.IntegerField(default=0, verbose_name="学习时长(分钟)")
+    url = models.CharField(max_length=200, verbose_name="访问地址", default="")
+
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 
     class Meta:

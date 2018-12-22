@@ -3,7 +3,7 @@ from django.views.generic.base import View
 
 from django.core.paginator import Paginator, PageNotAnInteger
 
-from .models import Course
+from .models import Course, CourseResource
 from operation.models import UserFavorite
 from MxOnline.settings import ORG_FAV, COURSE_FAV
 # Create your views here.
@@ -73,12 +73,35 @@ class CourseDetailView(View):
         return render(request=request, template_name=self.template_name, context=context)
 
 
-
-
 class CourseCommentView(View):
 
     cur_page = 'courseComment'
     template_name = 'courses/course-comment.html'
 
     def get(self, request, course_id):
-        course = Course.objects.get(id=int(course_id))
+        course = Course.objects.get(id=course_id)
+        comment_list = course.coursecomment_set.all().order_by("-add_time")
+        all_resources = CourseResource.objects.filter(course=course)
+        context = {
+            'course': course,
+            'comment_list': comment_list,
+            'course_resources': all_resources,
+            'cur_page': self.cur_page,
+        }
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class CourseVideoView(View):
+
+    cur_page = 'courseVideo'
+    template_name = 'courses/course-video.html'
+
+    def get(self, request, course_id):
+        course = Course.objects.get(id=course_id)
+        all_resources = CourseResource.objects.filter(course=course)
+        context = {
+            'course': course,
+            'course_resources': all_resources,
+            'cur_page': self.cur_page,
+        }
+        return render(request=request, template_name=self.template_name, context=context)
