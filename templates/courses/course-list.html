@@ -1,0 +1,101 @@
+{% extends 'courses/course-base.html' %}
+{% load staticfiles %}
+{% load useful_tags %}
+{% block title %}公开课列表 - 在线学习网{% endblock %}
+{% block custom_css %}
+
+{% endblock %}
+{% block url_path %}<li>公开课</li>{% endblock %}
+{% block crumbs %}
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li>公开课</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+
+{% block content %}
+{% with params=request.GET.urlencode %}
+<section>
+	<div class="wp">
+		<div class="list" style="margin-top:0;">
+			<div class="left layout">
+				<div class="head">
+					<ul class="tab_header">
+						<li {% if sort == '' %}class="active"{% endif %}><a href="{% relative_url 'sort' '' params %}">最新 </a></li>
+						<li {% if sort == 'hot' %}class="active"{% endif %}><a href="{% relative_url 'sort' 'hot' params %}">最热门</a></li>
+						<li {% if sort == 'students' %}class="active"{% endif %}><a href="{% relative_url 'sort' 'students' params %}">参与人数</a></li>
+					</ul>
+				</div>
+                <div id="inWindow">
+                    <div class="tab_cont " id="content">
+					<div class="group_list">
+                        {% for course in courses_list %}
+                            <div class="box">
+                                <a href="{% url 'courses:detail' course.id %}">
+                                    <img width="280" height="350" class="scrollLoading" src="{{ MEDIA_URL }}{{ course.image }}"/>
+                                </a>
+                                <div class="des">
+                                    <a href="{% url 'courses:detail' course.id %}">
+                                        <h2>{{ course.name|truncatechars:16 }}</h2>
+                                    </a>
+                                    <span class="fl">时长：<i class="key">{{ course.learn_times }}分钟</i></span>
+                                    <span class="fr">学习人数：{{ course.students }}&nbsp;&nbsp;</span>
+                                </div>
+                                <div class="bottom">
+                                    <a href="{% url 'courses:detail' course.id %}"><span class="fl">来自{{ course.course_org }}</span></a>
+                                    <span class="star fr  notlogin" data-favid="{{ course.id }}">
+                                        {{ course.fav_nums }}
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+					</div>
+                    <div class="pageturn">
+                        <ul class="pagelist">
+                           {% if courses_list.has_previous %}
+                               <li class="long"><a href="{% relative_url 'page' courses_list.previous_page_number params %}">上一页</a></li>
+                           {% endif %}
+                           {% for page in courses_list.paginator.page_range %}
+                               {% if page %}
+                                   <li class="{% if page == courses_list.number %}active{% endif %}"><a href="{% relative_url 'page' page params %}">{{ page }}</a></li>
+                               {% else %}
+                                   <li class="none"><a href="">...</a></li>
+                               {% endif %}
+                           {% endfor %}
+                           {% if courses_list.has_next %}
+                               <li class="long"><a href="{% relative_url 'page' courses_list.next_page_number params %}">下一页</a></li>
+                           {% endif %}
+                       </ul>
+                    </div>
+				</div>
+                </div>
+			</div>
+			<div class="right layout">
+				<div class="head">热门课程推荐</div>
+				<div class="group_recommend">
+
+                    {% for course in hot_courses %}
+                    <dl>
+						<dt>
+							<a target="_blank" href="{% url 'courses:detail'  course.id %}">
+								<img width="240" height="220" class="scrollLoading" src="{{ MEDIA_URL }}{{ course.image }}"/>
+							</a>
+						</dt>
+						<dd>
+							<a target="_blank" href="{% url 'courses:detail'  course.id %}"><h2> {{ course.name }}</h2></a>
+							<span class="fl">难度：<i class="key">{{ course.get_degree_display }}</i></span>
+						</dd>
+					</dl>
+                    {% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endwith %}
+{% endblock %}
+
