@@ -3,7 +3,7 @@ __author__ = 'Sheldon'
 __date__ = '2018/11/15 15:31'
 from django.urls import path
 
-from .views import CourseListView, CourseCommentView, CourseDetailView, CourseVideoView
+from .views import CourseListView, CourseCommentView, CourseDetailView, CourseVideoView, CoursePlayView
 
 
 app_name = 'courses'
@@ -12,4 +12,5 @@ urlpatterns = [
     path('detail/<int:course_id>', CourseDetailView.as_view(), name='detail'),
     path('comment/<int:course_id>', CourseCommentView.as_view(), name='comment'),
     path('video/<int:course_id>', CourseVideoView.as_view(), name='video'),
+    path('play/<int:video_id>', CoursePlayView.as_view(), name='play'),
 ]

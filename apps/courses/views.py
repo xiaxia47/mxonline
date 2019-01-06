@@ -1,11 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
 
 from django.core.paginator import Paginator, PageNotAnInteger
 
-from .models import Course, CourseResource
-from operation.models import UserFavorite
+from .models import Course, CourseResource, Video
+from operation.models import UserFavorite, UserCourse
 from MxOnline.settings import ORG_FAV, COURSE_FAV
+from utils.mixin_utils import LoginRequiredMixin
 # Create your views here.
 
 
@@ -73,17 +74,24 @@ class CourseDetailView(View):
         return render(request=request, template_name=self.template_name, context=context)
 
 
-class CourseCommentView(View):
+class CourseCommentView(LoginRequiredMixin, View):
 
     cur_page = 'courseComment'
     template_name = 'courses/course-comment.html'
 
     def get(self, request, course_id):
         course = Course.objects.get(id=course_id)
+        user_courses = UserCourse.objects.filter(id=course_id)
+        user_ids = [user_course.user.id for user_course in user_courses]
+        all_courses = UserCourse.objects.filter(user_id__in=user_ids)
+
+        course_ids = [course.id for course in all_courses]
+        related_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
         comment_list = course.coursecomment_set.all().order_by("-add_time")
         all_resources = CourseResource.objects.filter(course=course)
         context = {
             'course': course,
+            'related_courses': related_courses,
             'comment_list': comment_list,
             'course_resources': all_resources,
             'cur_page': self.cur_page,
@@ -91,16 +99,58 @@ class CourseCommentView(View):
         return render(request=request, template_name=self.template_name, context=context)
 
 
-class CourseVideoView(View):
+class CourseVideoView(LoginRequiredMixin, View):
 
     cur_page = 'courseVideo'
     template_name = 'courses/course-video.html'
 
     def get(self, request, course_id):
         course = Course.objects.get(id=course_id)
+        user_course = UserCourse.objects.filter(user=request.user, course=course)
+        if not user_course:
+            user_course = UserCourse(course=course, user=request.user)
+            user_course.save()
         all_resources = CourseResource.objects.filter(course=course)
+
+        user_courses = UserCourse.objects.filter(id=course_id)
+        user_ids = [user_course.user.id for user_course in user_courses]
+        all_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        course_ids = [course.id for course in all_courses]
+        related_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
+
         context = {
             'course': course,
+            'related_courses': related_courses,
+            'course_resources': all_resources,
+            'cur_page': self.cur_page,
+        }
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class CoursePlayView(LoginRequiredMixin, View):
+
+    cur_page = 'coursePlay'
+    template_name = 'courses/course-play.html'
+
+    def get(self, request, video_id):
+        video = get_object_or_404(Video, pk=video_id)
+        course = video.lesson.course
+        user_course = UserCourse.objects.filter(user=request.user, course=course)
+        if not user_course:
+            user_course = UserCourse(course=course, user=request.user)
+            user_course.save()
+        all_resources = CourseResource.objects.filter(course=course)
+
+        user_courses = UserCourse.objects.filter(id=course.id)
+        user_ids = [user_course.user.id for user_course in user_courses]
+        all_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        course_ids = [course.id for course in all_courses]
+        related_courses = Course.objects.filter(id__in=course_ids).order_by("-click_nums")[:5]
+
+        context = {
+            'course': course,
+            'video': video,
+            'related_courses': related_courses,
             'course_resources': all_resources,
             'cur_page': self.cur_page,
         }

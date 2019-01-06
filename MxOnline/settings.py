@@ -184,3 +184,6 @@ PAGINATION_SETTINGS = {
     'MARGIN_PAGES_DISPLAYED': 2,
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
+
+CONFIG_ROOT = os.path.join(BASE_DIR, 'utils')
+VIDEO_MANAGER = 'aliyun_oss'

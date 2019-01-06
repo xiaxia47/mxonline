@@ -104,3 +104,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 /.idea
+/utils/thirdparty.toml

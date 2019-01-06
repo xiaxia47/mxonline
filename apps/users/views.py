@@ -4,7 +4,7 @@ from django.shortcuts import render, reverse, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
-from django.views.generic import View,TemplateView
+from django.views.generic import View
 
 from .models import UserProfile, EmailVerifyRecord
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm
