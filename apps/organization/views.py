@@ -1,6 +1,7 @@
 # _*_ coding:utf-8 _*_
 from django.shortcuts import render
 from django.views.generic import View
+from django.db.models import Q
 
 from pure_pagination import Paginator, PageNotAnInteger
 
@@ -12,17 +13,24 @@ from operation.models import UserFavorite
 
 
 
-class OrgView(View):
+class OrgListView(View):
     template_name = 'orgs/org-list.html'
 
     def get(self, request):
         ua = UserAskForm()
         all_cities = CityDict.objects.all()
         all_orgs = CourseOrg.objects.all()
+        hot_orgs = all_orgs.order_by("-click_nums")[:3]
+
+        search_keywords = request.GET.get('keywords', '')
         city_id = request.GET.get('city', '')
         category = request.GET.get('ct', "")
-        sort = request.GET.get('sort','')
-        hot_orgs = all_orgs.order_by("-click_nums")[:3]
+        sort = request.GET.get('sort', '')
+
+        if search_keywords:
+            all_orgs = all_orgs.filter(Q(name__icontains=search_keywords) |
+                                             Q(address__icontains=search_keywords) |
+                                             Q(desc__icontains=search_keywords)).distinct()
         if city_id:
             all_orgs = all_orgs.filter(city_id=city_id)
         if category:
@@ -166,9 +174,14 @@ class TeacherListView(View):
 
     def get(self, request):
         teachers = Teacher.objects.all()
-        sort = request.GET.get('sort', '')
-        teacher_cnt = teachers.count()
         hot_teachers = teachers.order_by('-click_nums')[:5]
+        search_keywords = request.GET.get('keywords', '')
+        if search_keywords:
+            teachers = teachers.filter(Q(name__icontains=search_keywords)
+                                       |Q(course__name__icontains=search_keywords)
+                                       |Q(org__name__icontains=search_keywords)).distinct()
+        teacher_cnt = teachers.count()
+        sort = request.GET.get('sort', '')
         if sort == 'hot':
             teachers = teachers.order_by('-fav_nums')
         try:

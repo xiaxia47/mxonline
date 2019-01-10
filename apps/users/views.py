@@ -16,7 +16,7 @@ from organization.models import CourseOrg
 class CustomBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            user = UserProfile.objects.get(Q(username=username))
+            user = UserProfile.objects.get(Q(username=username) | Q(email=username)).distinct()
             if user.check_password(raw_password=password):
                 return user
         except Exception as e:

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.base import View
+from django.db.models import Q
 
 from django.core.paginator import Paginator, PageNotAnInteger
 
@@ -16,6 +17,12 @@ class CourseListView(View):
 
     def get(self, request):
         all_courses = Course.objects.all()
+
+        search_keywords = request.GET.get('keywords', '')
+        if search_keywords:
+            all_courses = all_courses.filter(Q(name__icontains=search_keywords) |
+                                             Q(teacher__name__icontains=search_keywords) |
+                                             Q(desc__icontains=search_keywords)).distinct()
         sort_type = request.GET.get('sort', '')
         hot_courses = all_courses.order_by('-click_nums')
         if sort_type == 'students':
