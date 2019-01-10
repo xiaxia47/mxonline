@@ -1,11 +1,11 @@
-{% extends 'courses/course-base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% load useful_tags %}
 {% block title %}课程详情 - 在线学习网{% endblock %}
 {% block url_path %}<li>课程详情</li>{% endblock %}
 {% block custom_css %}
 {% endblock %}
-{% block crumbs %}
+{% block cutom_bread %}
     <section>
         <div class="wp">
             <ul  class="crumbs">
@@ -49,7 +49,7 @@
 							<div class="btn colectgroupbtn" data-favid="{{ course.id }}" id="jsLeftBtn">
                                   {% if has_fav_course %}已收藏{% else %}收藏{% endif %}
                             </div>
-                                <div class="buy btn"><a style="color: white" href="{% url 'courses:video' course.id %}">开始学习</a></div>
+                                <a style="color: white" href="{% url 'courses:video' course.id %}"><div class="buy btn">开始学习</div></a>
 						</div>
 					</div>
                     <div class="group-share-box">
@@ -176,15 +176,16 @@ function add_fav(current_elem, fav_id, fav_type){
         },
     });
 }
+//fav_type 1- 收藏课程course  2 - 收藏机构corg  3 - 收藏教师 teacher
 $(document).ready(function() {
     $('#jsLeftBtn').on('click', function () {
-        add_fav($(this), $(this).attr('data-favid'),1);
+        add_fav($(this), $(this).attr('data-favid'),'course');
     });
 });
 
 $(document).ready(function() {
 	$('#jsRightBtn').on('click', function(){
-		add_fav($(this), $(this).attr('data-favid'), 2);
+		add_fav($(this), $(this).attr('data-favid'), 'corg');
 	});
 });
 

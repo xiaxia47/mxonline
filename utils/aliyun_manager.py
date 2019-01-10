@@ -7,6 +7,7 @@ from oss2 import Auth, Bucket
 from .config_manager import get_conf_attr
 from MxOnline.settings import VIDEO_MANAGER
 
+
 class AliyunOssManager(object):
 
     def __init__(self, accessKeyId, accessKeySecret, bucketName=None, endPoint=None):
@@ -41,7 +42,6 @@ class AliyunOssManager(object):
 
     def upload_video(self, videoPath):
         pass
-
 
 
 videoManager = AliyunOssManager(**get_conf_attr(VIDEO_MANAGER))

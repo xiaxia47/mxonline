@@ -187,3 +187,8 @@ PAGINATION_SETTINGS = {
 
 CONFIG_ROOT = os.path.join(BASE_DIR, 'utils')
 VIDEO_MANAGER = 'aliyun_oss'
+
+FAV_TYPE = {'course': 1,
+            'teacher': 3,
+            'corg': 2}
+

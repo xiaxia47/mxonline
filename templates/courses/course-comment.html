@@ -1,4 +1,4 @@
-{% extends 'courses/course-base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% block custom_css %}
     <link rel="stylesheet" type="text/css" href="{%  static 'css/muke/course/learn-less.css' %}" />
@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{%  static 'css/muke/course/common-less.css' %}">
     <link rel="stylesheet" type="text/css" href="{%  static 'css/mooc.css' %}" />
 {% endblock %}
-{% block crumbs %}
+{% block cutom_bread %}
 	<div class="wp">
 		<div class="crumbs">
 			<ul>

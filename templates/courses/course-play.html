@@ -1,4 +1,4 @@
-{% extends 'courses/course-base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% load useful_tags %}
 {% block title %}{{ course.name }}视频播放页-{{ video.name }}{% endblock %}
@@ -15,7 +15,7 @@
 
 
 <!--crumbs start-->
-{% block crumbs %}
+{% block cutom_bread %}
     <section>
 	<div class="wp">
 		<div class="crumbs">

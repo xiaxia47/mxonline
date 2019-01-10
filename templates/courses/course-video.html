@@ -1,4 +1,4 @@
-{% extends 'courses/course-base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 
 {% block title %}公开课视频信息 - 在线学习网{% endblock %}
@@ -11,7 +11,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/muke/course/common-less.css' %}">
 {% endblock %}
 <!--crumbs start-->
-{% block crumbs %}
+{% block cutom_bread %}
     <section>
 	<div class="wp">
 		<div class="crumbs">

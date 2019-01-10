@@ -26,11 +26,11 @@
                         <div class="personal">
                             <dl class="user fr">
                                 <dd>{{ request.user.username }}<img class="down fr" src="{% static 'images/top_down.png' %}"/></dd>
-                                <dt><img width="20" height="20" src="{% static 'media/image/2016/12/default_big_14.png' %} "/></dt>
+                                <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
                             </dl>
                             <div class="userdetail">
                             	<dl>
-	                                <dt><img width="80" height="80" src="{% static 'media/image/2016/12/default_big_14.png' %}"/></dt>
+	                                <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
 	                                <dd>
 	                                    <h2>{{ request.user.nickname }}</h2>
 	                                    <p>{{ request.user.username }}</p>
@@ -74,16 +74,16 @@
 				<div class="nav">
 					<div class="wp">
 						<ul>
-							<li class={% if cur_page == 'index' %}"active"{% endif %}><a href="{% url 'index' %}">首页</a></li>
-							<li class={% if cur_page == 'course_list' %}"active"{% endif %}>
+							<li class={% if request.path == '/' %}"active"{% endif %}><a href="{% url 'index' %}">首页</a></li>
+							<li class={% if request.path|slice:"8" == '/courses' %}"active"{% endif %}>
 								<a href="{% url 'courses:list' %}">
 									公开课<img class="hot" src="{% static 'images/nav_hot.png' %}">
 								</a>
 							</li>
-							<li class={% if cur_page == 'teacher_list' %}"active"{% endif %}>
-								<a href="teachers-list.html">授课教师</a>
+							<li class={% if request.path|slice:"13" == '/orgs/teacher' %}"active"{% endif %}>
+								<a href="{% url 'orgs:teacher_list' %}">授课教师</a>
 							</li>
-							<li class={% if cur_page == 'org_list' %}"active"{% endif %} ><a href="{% url 'orgs:org_list' %}">授课机构</a></li>
+							<li class={% if request.path|slice:"10" == '/orgs/list' %}"active"{% endif %} ><a href="{% url 'orgs:org_list' %}">授课机构</a></li>
 						</ul>
 					</div>
 				</div>

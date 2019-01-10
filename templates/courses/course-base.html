@@ -28,11 +28,11 @@
                         <div class="personal">
                             <dl class="user fr">
                                 <dd>{{ request.user.username }}<img class="down fr" src="{% static 'images/top_down.png' %}"/></dd>
-                                <dt><img width="20" height="20" src="{% static 'media/image/2016/12/default_big_14.png' %} "/></dt>
+                                <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
                             </dl>
                             <div class="userdetail">
                             	<dl>
-	                                <dt><img width="80" height="80" src="{% static 'media/image/2016/12/default_big_14.png' %}"/></dt>
+	                                <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
 	                                <dd>
 	                                    <h2>{{ request.user.nickname }}</h2>
 	                                    <p>{{ request.user.username }}</p>
@@ -88,7 +88,7 @@
 								</a>
 							</li>
 							<li >
-								<a href="../orgs/teachers-list.html">授课教师</a>
+								<a href="{% url 'orgs:teacher_list' %}">授课教师</a>
 							</li>
 							<li ><a href="{% url 'orgs:org_list' %}">授课机构</a></li>
 						</ul>

@@ -4,12 +4,12 @@ from django.views.generic import View
 
 from pure_pagination import Paginator, PageNotAnInteger
 
-from .models import CourseOrg, CityDict
+from .models import CourseOrg, CityDict, Teacher
+from MxOnline.settings import FAV_TYPE
 from operation.forms import UserAskForm
 from operation.models import UserFavorite
 # Create your views here.
 
-COURSE_FAV = 2
 
 
 class OrgView(View):
@@ -64,7 +64,7 @@ class OrgHomeView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
@@ -89,7 +89,7 @@ class OrgCourseView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
@@ -120,7 +120,7 @@ class OrgDescView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
@@ -143,7 +143,7 @@ class OrgTeacherView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=COURSE_FAV)
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
@@ -155,3 +155,67 @@ class OrgTeacherView(View):
             'teachers': teachers,
         }
         return render(request, template_name=self.template_name, context=context)
+
+
+class TeacherListView(View):
+    '''
+    机构教师
+    '''
+    template_name = 'orgs/teachers-list.html'
+    url_path = ''
+
+    def get(self, request):
+        teachers = Teacher.objects.all()
+        sort = request.GET.get('sort', '')
+        teacher_cnt = teachers.count()
+        hot_teachers = teachers.order_by('-click_nums')[:5]
+        if sort == 'hot':
+            teachers = teachers.order_by('-fav_nums')
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+
+        page_content = Paginator(teachers, per_page=4)
+        teachers_list = page_content.page(number=page)
+
+        context = {
+            'teachers_list': teachers_list,
+            'teacher_cnt': teacher_cnt,
+            'hot_teachers': hot_teachers,
+            'sort': sort,
+            'cur_page': '',
+        }
+        return render(request, template_name=self.template_name, context=context)
+
+
+class TeacherDetailView(View):
+    '''
+    机构教师
+    '''
+    template_name = 'orgs/teacher-detail.html'
+    url_path = ''
+
+    def get(self, request, teacher_id):
+        has_fav_org, has_fav_teacher = False, False
+        teacher = Teacher.objects.get(id=teacher_id)
+        hot_teachers = Teacher.objects.order_by('-click_nums')[:5]
+        courses = teacher.course_set.all()
+        org = teacher.org
+        if request.user.is_authenticated:
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org.id, fav_type=FAV_TYPE['corg'])
+            if existed_rec:
+                has_fav_org = True
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=teacher.id, fav_type=FAV_TYPE['teacher'])
+            if existed_rec:
+                has_fav_teacher = True
+        context = {
+            'has_fav_org': has_fav_org,
+            'has_fav_teacher': has_fav_teacher,
+            'hot_teachers': hot_teachers,
+            'courses': courses,
+            'course_org': org,
+            'teacher': teacher,
+        }
+        return render(request, template_name=self.template_name, context=context)
+

@@ -1,4 +1,4 @@
-{% extends 'courses/course-base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 {% load useful_tags %}
 {% block title %}公开课列表 - 在线学习网{% endblock %}
@@ -6,7 +6,7 @@
 
 {% endblock %}
 {% block url_path %}<li>公开课</li>{% endblock %}
-{% block crumbs %}
+{% block cutom_bread %}
     <section>
         <div class="wp">
             <ul  class="crumbs">

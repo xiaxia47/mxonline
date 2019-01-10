@@ -5,7 +5,7 @@ from django.core.paginator import Paginator, PageNotAnInteger
 
 from .models import Course, CourseResource, Video
 from operation.models import UserFavorite, UserCourse
-from MxOnline.settings import ORG_FAV, COURSE_FAV
+from MxOnline.settings import FAV_TYPE
 from utils.mixin_utils import LoginRequiredMixin
 # Create your views here.
 
@@ -43,7 +43,6 @@ class CourseDetailView(View):
     '''
     课程详情页
     '''
-    cur_page = 'courseDetail'
     template_name = 'courses/course-detail.html'
 
     def get(self, request, course_id):
@@ -57,10 +56,10 @@ class CourseDetailView(View):
             relate_courses = []
         has_fav_org = has_fav_course = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=course_id, fav_type=COURSE_FAV)
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=course_id, fav_type=FAV_TYPE['course'])
             if existed_rec:
                 has_fav_course = True
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=company.id, fav_type=ORG_FAV)
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=company.id, fav_type=FAV_TYPE['corg'])
             if existed_rec:
                 has_fav_org = True
         context = {
@@ -69,7 +68,6 @@ class CourseDetailView(View):
             'has_fav_course': has_fav_course,
             'course': course,
             'company': company,
-            'cur_page': self.cur_page,
         }
         return render(request=request, template_name=self.template_name, context=context)
 

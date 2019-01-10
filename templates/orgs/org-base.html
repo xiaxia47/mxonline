@@ -28,11 +28,11 @@
                         <div class="personal">
                             <dl class="user fr">
                                 <dd>{{ request.user.username }}<img class="down fr" src="{% static 'images/top_down.png' %}"/></dd>
-                                <dt><img width="20" height="20" src="{% static 'media/image/2016/12/default_big_14.png' %} "/></dt>
+                                <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ request.user.image }} "/></dt>
                             </dl>
                             <div class="userdetail">
                             	<dl>
-	                                <dt><img width="80" height="80" src="{% static 'media/image/2016/12/default_big_14.png' %}"/></dt>
+	                                <dt><img width="80" height="80" src="{{ MEDIA_URL }}{{ request.user.image }}"/></dt>
 	                                <dd>
 	                                    <h2>{{ request.user.nickname }}</h2>
 	                                    <p>{{ request.user.username }}</p>
@@ -173,12 +173,12 @@ $(function(){
     $(document).ready(function() {
         $('.jsFavBtn').on('click', function () {
             var type = $(this).attr('data-fav-type');
-            // 1- 收藏  2-   3-  4-
-            if (type == '1') {
-                favPraise($(this), 'fav', 1, '收藏');
+            //fav_type 1- 收藏课程course  2 - 收藏机构corg  3 - 收藏教师 teacher
+            if (type == 'course') {
+                favPraise($(this), 'fav', 'course', '收藏');
 
             } else if (type == '3') {
-                favPraise($(this), 'fav', 3);
+                favPraise($(this), 'fav', 'teacher');
 
             } else if (type == '11') {
                 favPraise($(this), 'pra', 1);
