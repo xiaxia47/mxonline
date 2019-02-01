@@ -1,10 +1,9 @@
 # _*_ coding:utf-8 _*_
 __author__ = 'Sheldon'
 __date__ = '2019/1/6 13:09'
-
-
 import toml
 from MxOnline.settings import CONFIG_ROOT
+
 
 def load_conf():
     thirdparty_conf = CONFIG_ROOT + '/thirdparty.toml'

@@ -1,25 +1,32 @@
 # _*_ coding:utf-8 _*_
 
-from django.shortcuts import render, reverse, redirect
+import json
+
+from django.shortcuts import render, reverse, redirect, HttpResponse,get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic import View
 
 from .models import UserProfile, EmailVerifyRecord
-from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm
+from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, \
+     UploadImageForm, UpdatePwdForm, ModifyEmailForm, ModifyUserForm
 from utils.email_utils import send_register_email, email_is_exist
+from utils.mixin_utils import LoginRequiredMixin
 from organization.models import CourseOrg
+from operation.models import UserCourse
+
 # Create your views here.
 
 
 class CustomBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
-            user = UserProfile.objects.get(Q(username=username) | Q(email=username)).distinct()
+            user = UserProfile.objects.get(Q(username=username) | Q(email=username))
             if user.check_password(raw_password=password):
                 return user
         except Exception as e:
+            print(e)
             return None
 
 
@@ -47,7 +54,7 @@ class LoginView(View):
                 context['msg'] = '用户名密码错误或用户未激活'
         else:
             context['login_form'] = login_form
-        return render(request=request, template_name=self.template_name)
+        return render(request=request, template_name=self.template_name, context=context)
 
 
 class RegisterView(View):
@@ -197,4 +204,112 @@ class IndexView(View):
         context = {}
         context['org_list'] = CourseOrg.objects.all()[:30]
         context['cur_page'] = 'index'
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class UserInfoCenter(LoginRequiredMixin, View):
+    """
+    用户个人信息
+    """
+    template_name = 'users/usercenter-info.html'
+    url = 'users:home'
+
+    def get(self, request):
+        image_form = UploadImageForm()
+        context = {'image_form': image_form}
+        return render(request, context=context, template_name=self.template_name)
+
+    def post(self, request):
+        user_info = ModifyUserForm(request.POST, instance=request.user)
+        context = {}
+        if user_info.is_valid():
+            user_info.save()
+            context['status'] = 'success'
+            context['msg'] = '资料更改成功'
+        else:
+            context['status'] = 'fail'
+            context['msg'] = list(user_info.errors.values())[0]
+        return HttpResponse(content=json.dumps(context), content_type='application/json')
+
+
+class UploadImageView(LoginRequiredMixin, View):
+
+    def post(self, request):
+        context = {}
+        image_form = UploadImageForm(request.POST, request.FILES, instance=request.user)
+        if image_form.is_valid():
+            image_form.save(commit=True)
+            context['status'] = 'success'
+            context['msg'] = '头像更改成功'
+        else:
+            context['status'] = 'fail'
+            context['msg'] = list(image_form.errors.values())[0]
+        return HttpResponse(content=json.dumps(context), content_type='application/json')
+
+
+class UpdatePasswordView(View):
+
+    def post(self, request):
+        modify_form = UpdatePwdForm(request.POST)
+        context = {}
+        if modify_form.is_valid():
+            request.user.set_password(raw_password=modify_form.cleaned_data.get('new_password', ''))
+            request.user.save()
+            context['msg'] = '重置成功，请重新登录'
+            context['status'] = 'success'
+        else:
+            context = json.dumps(modify_form.errors)
+        context = json.dumps(context)
+        return HttpResponse(content=context, content_type='application/json')
+
+
+class UpdateEmailView(LoginRequiredMixin, View):
+
+
+    def post(self, request):
+        modify_form = ModifyEmailForm(request.POST)
+        context = {}
+        if modify_form.is_valid():
+            email, code = modify_form.cleaned_data['email'], modify_form.cleaned_data['code']
+            email_rec = EmailVerifyRecord.objects.filter(email=email, code=code, send_type='pincode')
+            if email_rec.count() > 0 and email_rec[0].is_valid():
+                request.user.email = email
+                request.user.save()
+                context['msg'] = '邮箱更新成功'
+                context['status'] = 'success'
+            else:
+                context['msg'] = '验证码失效或者邮箱地址无效，请重试'
+                context['status'] = 'failed'
+        else:
+            context['msg'] = str(modify_form.errors['email'][0])
+            context['status'] = 'failed'
+        context = json.dumps(context)
+        return HttpResponse(content=context, content_type='application/json')
+
+
+class UserCourseView(LoginRequiredMixin, View):
+    '''
+    我的课程
+    '''
+    template_name = 'users/usercenter-mycourse.html'
+
+    def get(self, request):
+        courses = UserCourse.objects.filter(user=request.user)
+        context = {
+            'courses': courses
+        }
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class UserFavCourseView(LoginRequiredMixin, View):
+    '''
+    我的课程
+    '''
+    template_name = 'users/usercenter-mycourse.html'
+
+    def get(self, request):
+        courses = UserCourse.objects.filter(user=request.user)
+        context = {
+            'courses': courses
+        }
         return render(request=request, template_name=self.template_name, context=context)

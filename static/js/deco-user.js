@@ -12,7 +12,7 @@ function sendCodeChangeEmail($btn){
         cache: false,
         type: "get",
         dataType:'json',
-        url:"/users/sendemail_code/",
+        url:"/oper/sendpin/",
         data:$('#jsChangeEmailForm').serialize(),
         async: true,
         beforeSend:function(XMLHttpRequest){
@@ -24,9 +24,8 @@ function sendCodeChangeEmail($btn){
                 Dml.fun.showValidateError($('#jsChangeEmail'), data.email);
             }else if(data.status == 'success'){
                 Dml.fun.showErrorTips($('#jsChangeEmailTips'), "邮箱验证码已发送");
-            }else if(data.status == 'failure'){
-                 Dml.fun.showValidateError($('#jsChangeEmail'), "邮箱验证码发送失败");
-            }else if(data.status == 'success'){
+            }else if(data.status == 'failed'){
+                 Dml.fun.showErrorTips($('#jsChangeEmailTips'), data.msg);
             }
         },
         complete: function(XMLHttpRequest){
@@ -50,7 +49,7 @@ var verify = verifyDialogSubmit(
         cache: false,
         type: 'post',
         dataType:'json',
-        url:"/users/update_email/ ",
+        url:"/users/update_email/",
         data:$('#jsChangeEmailForm').serialize(),
         async: true,
         beforeSend:function(XMLHttpRequest){
@@ -65,7 +64,7 @@ var verify = verifyDialogSubmit(
                 Dml.fun.showErrorTips($('#jsChangePhoneTips'), "邮箱信息更新成功");
                 setTimeout(function(){location.reload();},1000);
             }else{
-                 Dml.fun.showValidateError($('#jsChangeEmail'), "邮箱信息更新失败");
+                 Dml.fun.showValidateError($('#jsChangeEmail'), data.msg);
             }
         },
         complete: function(XMLHttpRequest){
@@ -86,14 +85,14 @@ $(function(){
             cache: false,
             type: "POST",
             dataType:'json',
-            url:"/users/update/pwd/",
+            url:"/users/updatepwd/",
             data:$('#jsResetPwdForm').serialize(),
             async: true,
             success: function(data) {
-                if(data.password1){
-                    Dml.fun.showValidateError($("#pwd"), data.password1);
-                }else if(data.password2){
-                    Dml.fun.showValidateError($("#repwd"), data.password2);
+                if(data.old_password){
+                    Dml.fun.showValidateError($("#pwd"), data.old_password);
+                }else if(data.new_password){
+                    Dml.fun.showValidateError($("#repwd"), data.new_password);
                 }else if(data.status == "success"){
                     Dml.fun.showTipsDialog({
                         title:'提交成功',
@@ -134,7 +133,7 @@ $(function(){
     });
 
     laydate({
-        elem: '#birth_day',
+        elem: '#birthday',
         format: 'YYYY-MM-DD',
         max: laydate.now()
     });
@@ -160,7 +159,7 @@ $(function(){
             cache: false,
             type: 'post',
             dataType:'json',
-            url:"/users/info/",
+            url:"/users/home/",
             data:$jsEditUserForm.serialize(),
             async: true,
             beforeSend:function(XMLHttpRequest){
@@ -171,7 +170,7 @@ $(function(){
                 if(data.nick_name){
                     _showValidateError($('#nick_name'), data.nick_name);
                 }else if(data.birday){
-                   _showValidateError($('#birth_day'), data.birday);
+                   _showValidateError($('#birthday'), data.birday);
                 }else if(data.address){
                    _showValidateError($('#address'), data.address);
                 }else if(data.status == "failure"){

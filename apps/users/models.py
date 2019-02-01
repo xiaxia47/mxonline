@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # 第三方
 from django.db import models
@@ -14,7 +14,8 @@ class UserProfile(AbstractUser):
     gender = models.CharField(max_length=6, choices=(("male", "男"), ("female", "女")), default="female")
     address = models.CharField(max_length=100, default="")
     mobile = models.CharField(max_length=11, null=True, blank=True)
-    image = models.ImageField(upload_to="image/%Y/%m", default="image/default.png", max_length=100)
+    image = models.ImageField(verbose_name="用户头像", upload_to="image/%Y/%m", default="image/default.png",
+                              max_length=100, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = verbose_name = "用户信息"
@@ -29,15 +30,23 @@ class EmailVerifyRecord(models.Model):
     valid = models.BooleanField(verbose_name='有效', default=True)
     send_status = models.CharField(choices=(('succeed', '成功'), ('failed', '失败'), ('unknown', '未知')),
                                    max_length=10, verbose_name='发送状态', default='unknown')
-    send_type = models.CharField(choices=(("register", "注册"), ("forget", "找回密码")),
+    send_type = models.CharField(choices=(("register", "注册"), ("forget", "找回密码"), ("pincode", "验证码")),
                                  max_length=10, verbose_name="验证码类型")
     send_time = models.DateTimeField(default=datetime.now, verbose_name="发送时间")
+    expired = models.DateTimeField(blank=True, null=True, verbose_name="失效时间")
 
     class Meta:
         verbose_name_plural = verbose_name = "邮箱验证码"
 
     def __str__(self):
         return f"{self.email} - {self.code}"
+
+    def is_valid(self):
+        if self.valid and self.expired < datetime.now():
+            self.valid = False
+            self.save()
+
+        return self.valid
 
 
 class Banner(models.Model):

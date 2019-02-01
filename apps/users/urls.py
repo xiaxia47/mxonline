@@ -18,5 +18,19 @@ urlpatterns = [
     path('reset/<slug:reset_code>', views.ResetView.as_view(), name='reset'),
     path('expired/', TemplateView.as_view(template_name='users/url_expired.html'), name='expired'),
     path('mail_sent/', TemplateView.as_view(template_name='users/send_success.html'), name='mail_sent'),
+    # 个人中心
+    path('home/', views.UserInfoCenter.as_view(), name='home'),
+    # 我的收藏-机构
+    path('fav/org/', TemplateView.as_view(template_name='users/send_success.html'), name='favorg'),
+    # 我的课程
+    path('courses/', views.UserCourseView.as_view(), name='course'),
+    # 我的收藏-机构
+    path('fav/org/', TemplateView.as_view(template_name='users/send_success.html'), name='favorg'),
+    # 我的收藏-机构
+    path('fav/org/', TemplateView.as_view(template_name='users/send_success.html'), name='favorg'),
+    path('message/', TemplateView.as_view(template_name='users/send_success.html'), name='message'),
+    path('uploadimage/', views.UploadImageView.as_view(), name='upload_img'),
+    path('update_email/', views.UpdateEmailView.as_view(), name='update_email'),
+    path('updatepwd/', views.UpdatePasswordView.as_view(), name='updatepwd'),
 ]
 

@@ -1,5 +1,5 @@
 import json
-
+from datetime import timedelta, datetime
 from django.shortcuts import render
 from django.views.generic import View
 from django.http import HttpResponse
@@ -8,6 +8,9 @@ from .forms import UserAskForm
 from .models import UserFavorite, CourseComment
 from courses.models import Course, CourseOrg, Teacher
 from MxOnline.settings import FAV_TYPE
+from utils.mixin_utils import LoginRequiredMixin
+from utils.email_utils import send_register_email
+from users.models import EmailVerifyRecord
 # Create your views here.
 
 
@@ -26,7 +29,7 @@ class AddUserAskView(View):
         return HttpResponse(content=json.dumps(context), content_type='application/json')
 
 
-class AddUserFavView(View):
+class AddUserFavView(LoginRequiredMixin, View):
     '''
     用户收藏以及取消收藏
     @fav_type 1- 收藏课程  2 - 收藏机构  3 - 收集教师
@@ -84,7 +87,7 @@ class AddUserFavView(View):
         return HttpResponse(content=json.dumps(context), content_type='application/json')
 
 
-class AddCourseComment(View):
+class AddCourseCommentView(LoginRequiredMixin, View):
     '''
     用户收藏以及取消收藏
     @fav_type 1- 收藏课程  2 - 收藏机构  3 - 收藏教师
@@ -112,4 +115,35 @@ class AddCourseComment(View):
             new_comment.save()
             context['status'] = 'success'
             context['msg'] = '评论成功'
+        return HttpResponse(content=json.dumps(context), content_type='application/json')
+
+
+class SendPinCodeView(LoginRequiredMixin, View):
+    """
+    发送邮箱验证码
+    """
+    def get(self, request):
+        context = {}
+        status = 0
+        email = request.GET.get('email','').strip()
+        last_email = EmailVerifyRecord.objects\
+            .filter(email=email,
+                    valid=True,
+                    send_type='pincode',
+                    send_time__gte=datetime.now() - timedelta(seconds=60)).count()
+        if last_email > 0:
+            context['msg'] = '1分钟内请勿重复发送验证码'
+            context['status'] = 'failed'
+            status = -2
+        if email and status == 0:
+            status = send_register_email(receiver=email, send_type='pincode')
+        elif status == 0:
+            status = -1
+        if status == 1:
+            context['msg'] = '发送成功'
+            context['status'] = 'success'
+        elif status == -1:
+            context['msg'] = '发送失败，邮箱不存在'
+            context['status'] = 'failed'
+
         return HttpResponse(content=json.dumps(context), content_type='application/json')
