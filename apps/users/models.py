@@ -20,6 +20,10 @@ class UserProfile(AbstractUser):
     class Meta:
         verbose_name_plural = verbose_name = "用户信息"
 
+    def get_unread_nums(self):
+        from operation.models import UserMessage
+        return UserMessage.objects.filter(user=self.id, has_read=False).count()
+
     def __str__(self):
         return self.username if self.username is not None else self.email
 
@@ -27,7 +31,7 @@ class UserProfile(AbstractUser):
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name="验证码")
     email = models.EmailField(max_length=50, verbose_name="邮箱")
-    valid = models.BooleanField(verbose_name='有效', default=True)
+    valid = models.BooleanField(verbose_name='是否有效', null=True, blank=True, default=True)
     send_status = models.CharField(choices=(('succeed', '成功'), ('failed', '失败'), ('unknown', '未知')),
                                    max_length=10, verbose_name='发送状态', default='unknown')
     send_type = models.CharField(choices=(("register", "注册"), ("forget", "找回密码"), ("pincode", "验证码")),

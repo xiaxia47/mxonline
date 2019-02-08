@@ -38,10 +38,11 @@
                                 </dl>
                                 <div class="btn">
 	                                <a class="personcenter fl" href="{% url 'users:home' %}">进入个人中心</a>
-	                                <a class="fr" href="/logout/">退出</a>
+	                                <a class="fr" href="{% url 'users:logout' %}">退出</a>
                                 </div>
                             </div>
                         </div>
+                        <a href="{% url 'users:message' %}"><div class="msg-num"><span id="MsgNum">{{ request.user.get_unread_nums }}</span></div></a>
                     {% else %}
                         <a style="color:white" class="fr registerbtn" href="{% url 'users:register' %}">注册</a>
                         <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
@@ -51,7 +52,7 @@
 			</div>
             <div class="middle">
                 <div class="wp">
-                    <a href="index.html"><img class="fl" src="{% static 'images/logo.jpg' %}"/></a>
+                    <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo.jpg' %}"/></a>
                     <div class="searchbox fr">
                         <div class="selectContainer fl">
                             <span class="selectOption" id="jsSelectOption"

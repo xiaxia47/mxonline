@@ -66,3 +66,6 @@ class Teacher(models.Model):
 
     def __str__(self):
         return f"{self.org}-{self.name}"
+
+    def get_course_count(self):
+        return self.course_set.count()

@@ -86,6 +86,8 @@ class CourseCommentView(LoginRequiredMixin, View):
 
     def get(self, request, course_id):
         course = Course.objects.get(id=course_id)
+        course.click_nums += 1
+        course.save()
         user_courses = UserCourse.objects.filter(id=course_id)
         user_ids = [user_course.user.id for user_course in user_courses]
         all_courses = UserCourse.objects.filter(user_id__in=user_ids)
@@ -111,10 +113,13 @@ class CourseVideoView(LoginRequiredMixin, View):
 
     def get(self, request, course_id):
         course = Course.objects.get(id=course_id)
+        course.click_nums += 1
         user_course = UserCourse.objects.filter(user=request.user, course=course)
         if not user_course:
             user_course = UserCourse(course=course, user=request.user)
             user_course.save()
+            course.students += 1
+        course.save()
         all_resources = CourseResource.objects.filter(course=course)
 
         user_courses = UserCourse.objects.filter(id=course_id)
@@ -140,10 +145,13 @@ class CoursePlayView(LoginRequiredMixin, View):
     def get(self, request, video_id):
         video = get_object_or_404(Video, pk=video_id)
         course = video.lesson.course
+        course.click_nums += 1
         user_course = UserCourse.objects.filter(user=request.user, course=course)
         if not user_course:
             user_course = UserCourse(course=course, user=request.user)
             user_course.save()
+            course.students += 1
+        course.save()
         all_resources = CourseResource.objects.filter(course=course)
 
         user_courses = UserCourse.objects.filter(id=course.id)

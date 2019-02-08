@@ -10,6 +10,7 @@ from organization.models import CourseOrg, Teacher
 class Course(models.Model):
     course_org = models.ForeignKey(CourseOrg, verbose_name='课程机构', null=True, on_delete=models.CASCADE)
     teacher = models.ForeignKey(Teacher, verbose_name='授课教师', null=True, blank=True, on_delete=models.CASCADE)
+    is_banner = models.BooleanField(verbose_name='是否轮播', null=True, blank=True, default=False)
     name = models.CharField(max_length=50, verbose_name="课程名")
     desc = models.CharField(max_length=300, verbose_name="课程描述")
     category = models.CharField(max_length=20, verbose_name="课程类别", default="后端开发")

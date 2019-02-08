@@ -72,13 +72,15 @@ class OrgHomeView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['corg'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
+        course_org.click_nums += 1
+        course_org.save()
         context = {
             'has_fav': has_fav,
-            'org_id':org_id,
+            'org_id': org_id,
             'courses':course_org.course_set.all()[:3],
             'teachers':course_org.teacher_set.all()[:1],
             'course_org':course_org,
@@ -97,10 +99,12 @@ class OrgCourseView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['corg'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
+        course_org.click_nums += 1
+        course_org.save()
         all_courses = course_org.course_set.all()
         try:
             page = request.GET.get('page', 1)
@@ -128,10 +132,12 @@ class OrgDescView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['corg'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
+        course_org.click_nums += 1
+        course_org.save()
         context = {
             'has_fav': has_fav,
             'org_id': org_id,
@@ -151,10 +157,12 @@ class OrgTeacherView(View):
     def get(self, request, org_id):
         has_fav = False
         if request.user.is_authenticated:
-            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['course'])
+            existed_rec = UserFavorite.objects.filter(user=request.user, fav_id=org_id, fav_type=FAV_TYPE['corg'])
             if existed_rec:
                 has_fav = True
         course_org = CourseOrg.objects.get(id=org_id)
+        course_org.click_nums += 1
+        course_org.save()
         teachers = course_org.teacher_set.all()
         context = {
             'has_fav': has_fav,
@@ -212,6 +220,8 @@ class TeacherDetailView(View):
     def get(self, request, teacher_id):
         has_fav_org, has_fav_teacher = False, False
         teacher = Teacher.objects.get(id=teacher_id)
+        teacher.click_nums += 1
+        teacher.save()
         hot_teachers = Teacher.objects.order_by('-click_nums')[:5]
         courses = teacher.course_set.all()
         org = teacher.org

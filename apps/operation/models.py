@@ -41,8 +41,8 @@ class UserFavorite(models.Model):
 
 
 class UserMessage(models.Model):
-    user = models.IntegerField(default=0, verbose_name="接受用户") # 0 全局消息 非0 特定用户ID
-    message = models.CharField(max_length=500, verbose_name="消息内容")
+    user = models.IntegerField(default=0, verbose_name="接受用户")  # 0 全局消息 非0 特定用户ID
+    msg_body = models.CharField(max_length=500, verbose_name="消息内容")
     has_read = models.BooleanField(default=False, verbose_name="是否已读")
     add_time = models.DateTimeField(default=datetime.now, verbose_name="添加时间")
 

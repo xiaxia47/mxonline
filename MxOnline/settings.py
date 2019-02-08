@@ -38,7 +38,7 @@ PROD_ENV = False
 SECRET_KEY = 'd4y_*olk=&_gaj)pt(5276gj&&+^ascp@^3w65r^-b0h4*lg&%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -165,9 +165,10 @@ USE_TZ = False  # 默认存储时间
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+if DEBUG == True:
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static'),
+    ]
 
 DOMAIN_URL = 'http://127.0.0.1:8000'
 EMAIL_HOST = 'smtp.sina.com'
@@ -178,6 +179,7 @@ ENAIL_USE_TLS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 PAGINATION_SETTINGS = {
     'PAGE_RANGE_DISPLAYED': 4,

@@ -2,19 +2,22 @@
 
 import json
 
-from django.shortcuts import render, reverse, redirect, HttpResponse,get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.shortcuts import render, reverse, redirect, HttpResponse, HttpResponseRedirect
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django.views.generic import View
+from pure_pagination import Paginator, PageNotAnInteger
 
-from .models import UserProfile, EmailVerifyRecord
+from MxOnline.settings import FAV_TYPE
+from .models import UserProfile, EmailVerifyRecord, Banner
 from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm, \
      UploadImageForm, UpdatePwdForm, ModifyEmailForm, ModifyUserForm
 from utils.email_utils import send_register_email, email_is_exist
 from utils.mixin_utils import LoginRequiredMixin
-from organization.models import CourseOrg
-from operation.models import UserCourse
+from operation.models import UserCourse, UserFavorite, UserMessage
+from organization.models import Teacher, CourseOrg
+from courses.models import Course
 
 # Create your views here.
 
@@ -57,6 +60,13 @@ class LoginView(View):
         return render(request=request, template_name=self.template_name, context=context)
 
 
+class LogoutView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(reverse('index'))
+
+
 class RegisterView(View):
     template_name = 'users/register.html'
     url = 'users:register'
@@ -79,6 +89,9 @@ class RegisterView(View):
                 user_profile.set_password(raw_password=pass_word)
                 user_profile.is_active = False
                 user_profile.save()
+                user_message = UserMessage(user=user_profile.id, msg_body='欢迎注册在线学习教育网')
+                user_message.save()
+
                 send_register_email(user_name, 'register')
                 context['msg'] = "注册成功，激活链接已发送到您的邮箱"
                 self.template_name = 'users/login.html'
@@ -201,9 +214,18 @@ class IndexView(View):
     template_name = 'index.html'
 
     def get(self, request):
-        context = {}
-        context['org_list'] = CourseOrg.objects.all()[:30]
-        context['cur_page'] = 'index'
+        #取出轮播图
+        banners = Banner.objects.all().order_by('index')[:5]
+        courses = Course.objects.all().order_by('fav_nums')[:6]
+        banner_courses = Course.objects.filter(is_banner=True).order_by('fav_nums')[:3]
+
+        context = {
+            'org_list': CourseOrg.objects.all()[:15],
+            'courses': courses,
+            'banner_courses': banner_courses,
+            'cur_page': 'index',
+            'banners': banners,
+        }
         return render(request=request, template_name=self.template_name, context=context)
 
 
@@ -305,11 +327,75 @@ class UserFavCourseView(LoginRequiredMixin, View):
     '''
     我的课程
     '''
-    template_name = 'users/usercenter-mycourse.html'
+    template_name = 'users/usercenter-fav-course.html'
 
     def get(self, request):
-        courses = UserCourse.objects.filter(user=request.user)
+        fav_ids = UserFavorite.objects.filter(user=request.user, fav_type=FAV_TYPE['course'])
+        courses = Course.objects.filter(id__in=[favrec.fav_id for favrec in fav_ids])
         context = {
-            'courses': courses
+            'fav_courses': courses
         }
         return render(request=request, template_name=self.template_name, context=context)
+
+
+class UserFavOrgView(LoginRequiredMixin, View):
+    '''
+    收藏-我的机构
+    '''
+    template_name = 'users/usercenter-fav-org.html'
+
+    def get(self, request):
+        fav_ids = UserFavorite.objects.filter(user=request.user, fav_type=FAV_TYPE['corg'])
+        orgs = CourseOrg.objects.filter(id__in=[favrec.fav_id for favrec in fav_ids])
+        context = {
+            'fav_orgs': orgs
+        }
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class UserFavTeacherView(LoginRequiredMixin, View):
+    '''
+    收藏-我的教师
+    '''
+    template_name = 'users/usercenter-fav-teacher.html'
+
+    def get(self, request):
+        fav_ids = UserFavorite.objects.filter(user=request.user, fav_type=FAV_TYPE['teacher'])
+        teachers = Teacher.objects.filter(id__in=[favrec.fav_id for favrec in fav_ids])
+        context = {
+            'fav_teachers': teachers
+        }
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+class UserMessageView(LoginRequiredMixin, View):
+    '''
+    消息中心
+    '''
+
+    template_name = 'users/usercenter-message.html'
+
+    def get(self, request):
+        messages = UserMessage.objects.filter(user__in=[0, request.user.id])
+        unread_messages = UserMessage.objects.filter(user__in=[request.user.id], has_read=False)
+        for msg in unread_messages.all():
+            msg.has_read = True
+            msg.save()
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        page_content = Paginator(messages, per_page=4)
+        messages = page_content.page(number=page)
+
+        context = {
+            'user_messages': messages
+        }
+        return render(request=request, template_name=self.template_name, context=context)
+
+
+def page_not_found(request, template_name='404.html'):
+    from django.shortcuts import render_to_response
+    response = render_to_response(template_name=template_name, context='')
+    response.status_code = 404
+    return response

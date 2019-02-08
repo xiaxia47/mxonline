@@ -13,7 +13,6 @@
     {% block custom_css %} {% endblock %}
     <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
-    {% block custom_js %} {% endblock %}
 </head>
 <body>
 <section class="headerwrap headerwrap2">
@@ -40,10 +39,10 @@
                                 </dl>
                                 <div class="btn">
 	                                <a class="personcenter fl" href="{% url 'users:home' %}">进入个人中心</a>
-	                                <a class="fr" href="/logout/">退出</a>
+	                                <a class="fr" href="{% url 'users:logout' %}">退出</a>
                                 </div>
                             </div>
-                        </div>
+                        </div><a href="{% url 'users:message' %}"><div class="msg-num"><span id="MsgNum">{{ request.user.get_unread_nums }}</span></div></a>
                     {% else %}
                         <a style="color:white" class="fr registerbtn" href="{% url 'users:register' %}">注册</a>
                         <a style="color:white" class="fr loginbtn" href="{% url 'users:login' %}">登录</a>
@@ -66,7 +65,7 @@
                 </p>
             </div>
             <div class="btn fr collectionbtn  notlogin 
-                 "data-favid="{{ org_id }}" data-fav-type="2">
+                 "data-favid="{{ org_id }}" data-fav-type="corg">
                  {% if has_fav %}已收藏{% else %}收藏{% endif %}
             </div>
 
@@ -114,11 +113,13 @@
 </div>
 <!--弹出省省市-->
 <script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
+<script src="{% static 'js/deco-common.js' %}" type='text/javascript'></script>
 <script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
 <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
 <script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
-
 <script type="text/javascript" src="{% static 'js/plugins/jquery.raty.js' %}"></script>
+<script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/plugins/jquery.scrollLoading.js' %}"  type="text/javascript"></script>
 <script type="text/javascript">
     //收藏分享
 //收藏分享
@@ -174,8 +175,8 @@ $(function(){
         $('.jsFavBtn').on('click', function () {
             var type = $(this).attr('data-fav-type');
             //fav_type 1- 收藏课程course  2 - 收藏机构corg  3 - 收藏教师 teacher
-            if (type == 'course') {
-                favPraise($(this), 'fav', 'course', '收藏');
+            if (type == '1') {
+                favPraise($(this), 'fav', 'course');
 
             } else if (type == '3') {
                 favPraise($(this), 'fav', 'teacher');
@@ -183,8 +184,8 @@ $(function(){
             } else if (type == '11') {
                 favPraise($(this), 'pra', 1);
 
-            } else if (type == '4') {
-                favPraise($(this), 'fav', 4);
+            } else if (type == '2') {
+                favPraise($(this), 'fav', 'corg');
 
             }
         });
@@ -217,6 +218,6 @@ $(function() {
     });
 });
 </script>
-
+{% block custom_js %} {% endblock %}
 </body>
 </html>

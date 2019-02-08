@@ -197,7 +197,7 @@ $('#jsSetNewPwdBtn').on('click', function(){
 
 
 //收藏分享
-function favPraise($elem, fun ,typeid){
+function favPraise($elem, fun ,fav_type){
     var num = parseInt($elem.text()),
         favid = $elem.attr('data-favid'),url = '',
         styleClass1 = '',styleClass2 = '',numChange = '',
@@ -205,7 +205,7 @@ function favPraise($elem, fun ,typeid){
 
     if($elem.hasClass('collected')){
         if(fun == 'fav'){
-            url = '/common/delfavorite/';
+            url = '/oper/addfav/';
         }else if(fun == 'pra'){
             url = '/common/delpraise/';
         }
@@ -216,7 +216,7 @@ function favPraise($elem, fun ,typeid){
         if(num > 0) numChange = num - 1;
     } else {
         if(fun == 'fav'){
-            url = '/common/addfavorite/';
+            url = '/oper/addfav/';
         }else if(fun == 'pra'){
             url = '/common/addpraise/';
         }
@@ -231,7 +231,7 @@ function favPraise($elem, fun ,typeid){
         type: "POST",
         url: url,
         data: {
-            typeid: typeid,
+            fav_type: fav_type,
             favid: favid
         },
         async: true,
