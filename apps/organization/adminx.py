@@ -20,6 +20,7 @@ class CourseOrgAdmin(object):
                      'city']
     list_filter = ['name', 'click_nums', 'fav_nums', 'address',
                    'city', 'add_time']
+    relfield_style = 'fk-ajax'
 
 
 class TeacherAdmin(object):
@@ -29,6 +30,7 @@ class TeacherAdmin(object):
                      ]
     list_filter = ['org__name', 'name', 'work_years', 'work_company', 'work_position',
                    'add_time']
+    relfield_style = 'fk-ajax'
 
 
 xadmin.site.register(CityDict, CityDictAdmin)

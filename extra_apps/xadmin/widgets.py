@@ -86,7 +86,7 @@ class AdminSplitDateTime(forms.SplitDateTimeWidget):
 
 class AdminRadioInput(RadioChoiceInput):
 
-    def render(self, name=None, value=None, attrs=None, choices=()):
+    def render(self, name=None, value=None, attrs=None, choices=(), renderer=None):
         name = name or self.name
         value = value or self.value
         attrs = attrs or self.attrs
@@ -122,7 +122,7 @@ class AdminRadioSelect(forms.RadioSelect):
 
 class AdminCheckboxSelect(forms.CheckboxSelectMultiple):
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, choices=(), renderer=None):
         if value is None:
             value = []
         has_id = attrs and 'id' in attrs

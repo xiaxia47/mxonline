@@ -16,7 +16,7 @@ class CourseListView(View):
     template_name = 'courses/course-list.html'
 
     def get(self, request):
-        all_courses = Course.objects.all()
+        all_courses = Course.objects.all().order_by('add_time')
 
         search_keywords = request.GET.get('keywords', '')
         if search_keywords:

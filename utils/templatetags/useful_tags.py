@@ -20,5 +20,5 @@ def relative_url(field_name, value, urlencode=None):
 
 
 @register.simple_tag
-def get_video_url(video_path, expires=3600):
+def get_video_url(video_path, expires=1800):
     return videoManager.get_video_url(video_path, expires)

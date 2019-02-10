@@ -29,7 +29,7 @@ class SelectMultipleTransfer(forms.SelectMultiple):
         return u'<option value="%s">%s</option>' % (
             escape(option_value), conditional_escape(force_text(option_label))), bool(option_value in selected_choices)
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, choices=(), renderer=None):
         if attrs is None:
             attrs = {}
         attrs['class'] = ''
@@ -80,11 +80,11 @@ class SelectMultipleDropdown(forms.SelectMultiple):
     def media(self):
         return vendor('multiselect.js', 'multiselect.css', 'xadmin.widget.multiselect.js')
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, choices=(), renderer=None):
         if attrs is None:
             attrs = {}
         attrs['class'] = 'selectmultiple selectdropdown'
-        return super(SelectMultipleDropdown, self).render(name, value, attrs, choices)
+        return super(SelectMultipleDropdown, self).render(name, value, attrs, choices, renderer)
 
 
 class M2MSelectPlugin(BaseAdminPlugin):

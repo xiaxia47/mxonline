@@ -25,7 +25,7 @@ class Course(models.Model):
     add_time = models.DateTimeField(default=datetime.now, verbose_name="课程添加时间")
     instruction = models.CharField(max_length=300, verbose_name="课程须知", default='', null=True, blank=True)
     introduction = models.CharField(max_length=300, verbose_name="老师引言", default='', null=True, blank=True)
-    announcement = models.CharField(max_length=300, verbose_name="课程公告；‘ ’", default='', null=True, blank=True)
+    announcement = models.CharField(max_length=300, verbose_name="课程公告", default='', null=True, blank=True)
 
     class Meta:
         verbose_name_plural = verbose_name = "课程"
@@ -48,6 +48,12 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class BannerCourse(Course):
+    class Meta:
+        proxy = True
+        verbose_name_plural = verbose_name = '课程轮播图'
 
 
 class Lesson(models.Model):

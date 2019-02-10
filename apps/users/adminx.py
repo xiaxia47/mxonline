@@ -4,9 +4,8 @@ __date__ = '2018/9/7 11:47'
 
 import xadmin
 from xadmin import views
-
 from .models import EmailVerifyRecord, Banner
-
+from xadmin.plugins.auth import UserAdmin
 
 class BaseSetting(object):
     enable_themes = True
@@ -23,6 +22,7 @@ class EmailVerifyRecordAdmin(object):
     list_display = ['code', 'email', 'send_type', 'send_time']
     search_fields = ['code', 'email', 'send_type']
     list_filter = ['code', 'email', 'send_type', 'send_time']
+    model_icon = 'fa fa-address-book-o' #修改图标
 
 
 class BannerAdmin(object):

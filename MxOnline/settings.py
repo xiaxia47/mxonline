@@ -38,10 +38,32 @@ PROD_ENV = False
 SECRET_KEY = 'd4y_*olk=&_gaj)pt(5276gj&&+^ascp@^3w65r^-b0h4*lg&%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+
+if TEST_ENV:
+    DEBUG = True
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static'),
+    ]
+elif PROD_ENV:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+    DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+    },
+}
 
 # Application definition
 
@@ -165,11 +187,6 @@ USE_TZ = False  # 默认存储时间
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-if DEBUG == True:
-    STATICFILES_DIRS = [
-        os.path.join(BASE_DIR, 'static'),
-    ]
-
 DOMAIN_URL = 'http://127.0.0.1:8000'
 EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
@@ -179,7 +196,7 @@ ENAIL_USE_TLS = True
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 
 PAGINATION_SETTINGS = {
     'PAGE_RANGE_DISPLAYED': 4,
@@ -193,4 +210,71 @@ VIDEO_MANAGER = 'aliyun_oss'
 FAV_TYPE = {'course': 1,
             'teacher': 3,
             'corg': 2}
-
+'''
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '{levelname} {message}',
+            'style': '{',
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_false'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'filters': ['require_debug_false']
+        },
+        'debug': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*512, #文件大小
+            'backupCount': 5, #备份数量
+            'formatter': 'verbose',
+            'filename': os.path.join(BASE_DIR, 'log/debug.log')
+        }
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
+'''
