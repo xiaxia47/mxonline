@@ -1,0 +1,80 @@
+{% extends 'users/usercenter.html' %}
+{% load staticfiles %}
+{% load useful_tags %}
+{% block title %}我的消息- 慕学在线网{% endblock %}
+{% block custom_crumbs %}
+<!--crumbs start-->
+
+    <section>
+        <div class="wp">
+            <ul  class="crumbs">
+                <li><a href="{% url 'index' %}">首页</a>></li>
+                <li><a href="{% url 'users:home' %}">个人中心</a>></li>
+                <li>我的消息</li>
+            </ul>
+        </div>
+    </section>
+{% endblock %}
+{% block content %}
+{% with params=request.GET.urlencode %}
+<section>
+	<div class="wp list personal_list">
+	<div class="left">
+        <ul>
+            <li ><a href="{% url 'users:home' %}">个人资料</a></li>
+            <li ><a href="{% url 'users:course' %}">我的课程</a></li>
+            <li ><a href="{% url 'users:favorg' %}">我的收藏</a></li>
+            <li class="active2">
+                <a href="{% url 'users:message' %}" style="position: relative;">
+                    我的消息
+                </a>
+            </li>
+        </ul>
+	</div>
+    <div class="right" >
+		<div class="personal_des Releasecont">
+			<div class="head">
+				<h1>我的消息</h1>
+			</div>
+		</div>
+		<div class="personal_des permessage">
+			<div class="head">
+				<ul class="tab_header messagehead">
+					<li class="active"><a href="{% url 'users:message' %}">个人消息</a> </li>
+				</ul>
+			</div>
+			<div class="messagelist">
+                {% for msg in user_messages.object_list %}
+                    <div class="messages">
+                        <div class="fr">
+                            <div class="top"><span class="fl time">{{ msg.add_time }}</span><span class="fr btn foldbtn"></span></div>
+                            <p>
+                                {{ msg.msg_body }}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+			</div>
+            <div class="pageturn">
+           <ul class="pagelist">
+               {% if user_messages.has_previous %}
+                   <li class="long"><a href="{% relative_url 'page' user_messages.previous_page_number params %}">上一页</a></li>
+               {% endif %}
+               {% for page in user_messages.pages %}
+                   {% if page %}
+                       <li class="{% if page == user_messages.number %}active{% endif %}"><a href="{% relative_url 'page' page params %}">{{ page }}</a></li>
+                   {% else %}
+                       <li class="none"><a href="">...</a></li>
+                   {% endif %}
+               {% endfor %}
+               {% if orgs_list.has_next %}
+                   <li class="long"><a href="{% relative_url 'page' user_messages.next_page_number params %}">下一页</a></li>
+               {% endif %}
+           </ul>
+        </div>
+		</div>
+	</div>
+	</div>
+</section>
+{% endwith %}
+{% endblock %}
