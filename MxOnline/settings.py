@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'captcha',
     'pure_pagination',
     'django_extensions',
+    'DjangoUeditor',
 ]
 
 AUTH_USER_MODEL = "users.UserProfile"
@@ -278,3 +279,4 @@ LOGGING = {
     }
 }
 '''
+

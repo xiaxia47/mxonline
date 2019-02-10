@@ -13,21 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-import logging
-
-logger = logging.getLogger(__name__)
 import xadmin
 from django.urls import path, re_path
 from django.conf.urls import include
 from django.views.static import serve
 
-from .settings import MEDIA_ROOT,DEBUG
+from .settings import MEDIA_ROOT, DEBUG
 from users.views import IndexView
 
-logger.info(msg=f'Loading main url.py')
 urlpatterns = [
     path('', IndexView.as_view(), name="index"),
     path('xadmin/', xadmin.site.urls),
+    path('ueditor/', include('DjangoUeditor.urls')),
     path('captcha/', include('captcha.urls')),
     path('users/', include('users.urls', namespace='users')),
     path('orgs/', include('organization.urls', namespace='orgs')),
@@ -38,9 +35,7 @@ urlpatterns = [
 ]
 
 if not DEBUG:
-    logger.info(msg=f'PROD environment: Loading static root:{STATIC_ROOT}')
     from .settings import STATIC_ROOT
     urlpatterns.append(re_path('static/(?P<path>.*)$', serve, {'document_root': STATIC_ROOT}))
-#全局404页面 标准函数名字，django 会自动调用
 
 

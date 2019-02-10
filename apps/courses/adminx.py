@@ -29,11 +29,18 @@ class CourseAdmin(object):
     readonly_fields = ['click_nums']
     exclude = ['fav_nums']  # 后台不显示 字段与readonly_fields 冲突，不可重复
     inlines = [LessonInline, CourseResourseInline]  # 当前页配置关联内容
+    style_fields = {'detail': 'ueditor'} #制定样式
     list_editable = ['degree', 'name']
+    enable_import_excel = True
 
     def queryset(self):
         qs = super(CourseAdmin, self).queryset()
         return qs.filter(is_banner=False)
+
+    def post(self, request, *args, **kwargs):
+        if 'excel' in request.FILES:
+            pass
+        return super(CourseAdmin, self).post(request, args, kwargs)
 
 
 class BannerCourseAdmin(object):
