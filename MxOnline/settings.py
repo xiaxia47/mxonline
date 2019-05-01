@@ -188,7 +188,7 @@ USE_TZ = False  # 默认存储时间
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-DOMAIN_URL = 'http://127.0.0.1:8000'
+DOMAIN_URL = 'http://www.fsdeep.com'
 EMAIL_HOST = 'smtp.sina.com'
 EMAIL_PORT = 25
 EMAIL_FROM = EMAIL_HOST_USER = 'fsdeep@sina.com'
